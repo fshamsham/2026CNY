@@ -62,7 +62,7 @@ export async function fetchVideoData(): Promise<VideoData[]> {
 
     // Attempt to find the header row (sometimes sheets have empty rows at the top)
     let headerRowIndex = -1;
-    for (let i = 0; i < rows.length; i++) {
+    for (let i = 0; i < Math.min(rows.length, 20); i++) {
       const rowStr = rows[i].join(',').toLowerCase();
       if (rowStr.includes('videotitle') || rowStr.includes('videourl')) {
         headerRowIndex = i;
@@ -109,7 +109,8 @@ export async function fetchVideoData(): Promise<VideoData[]> {
         ViewsPerDay: 0,
         TrendingRank: 0,
         RankMomentum: 0,
-        CreativeAdvice: ''
+        CreativeAdvice: '',
+        LastDataUpdate: ''
       };
 
       const getVal = (key: string) => {

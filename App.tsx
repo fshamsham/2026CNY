@@ -9,6 +9,7 @@ import { Music, Sparkles, Star, AlertCircle, RefreshCw, ChevronUp } from 'lucide
 
 const App: React.FC = () => {
   const [videos, setVideos] = useState<VideoData[]>([]);
+  const [lastUpdate, setLastUpdate] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,17 +24,51 @@ const App: React.FC = () => {
     setModalOpenCount(prev => isOpen ? prev + 1 : Math.max(0, prev - 1));
   }, []);
 
+  const formatDateTime = (date: Date): string => {
+    const YYYY = date.getFullYear();
+    const MM = String(date.getMonth() + 1).padStart(2, '0');
+    const DD = String(date.getDate()).padStart(2, '0');
+    
+    let hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    const HH = String(hours).padStart(2, '0');
+    
+    return `${YYYY}/${MM}/${DD} ${HH}:${minutes} ${ampm}`;
+  };
+
   const loadData = useCallback(async (isSilent = false) => {
     if (!isSilent) setLoading(true);
     else setRefreshing(true);
     
     setError(null);
     try {
-      const data = await fetchVideoData();
-      if (data.length === 0) {
+      const videoData = await fetchVideoData();
+      
+      if (videoData.length === 0) {
         throw new Error("No data records found in the source sheet.");
       }
-      setVideos(data);
+      
+      // Extract the maximum LastDataUpdate from the dataset
+      let maxTimeValue = 0;
+      let latestDateObj: Date | null = null;
+      
+      videoData.forEach(v => {
+        if (v.LastDataUpdate) {
+          const d = new Date(v.LastDataUpdate);
+          const time = d.getTime();
+          if (!isNaN(time) && time > maxTimeValue) {
+            maxTimeValue = time;
+            latestDateObj = d;
+          }
+        }
+      });
+      
+      setVideos(videoData);
+      setLastUpdate(latestDateObj ? formatDateTime(latestDateObj) : '---');
     } catch (err: any) {
       console.error("App Error:", err);
       setError(err.message || '无法加载新年歌数据，请检查网络连接或稍后重试。');
@@ -129,7 +164,9 @@ const App: React.FC = () => {
               </h1>
               <div className="flex items-center gap-2">
                 <span className="h-px w-3 md:w-4 bg-red-600/30"></span>
-                <p className="text-red-900/40 text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] md:tracking-[0.25em]">{t.subtitle}</p>
+                <p className="text-red-900/60 text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] md:tracking-[0.25em]">
+                  {t.subtitle} <span className="text-red-600">{lastUpdate}</span>
+                </p>
               </div>
             </div>
           </div>

@@ -1,11 +1,15 @@
 import { Translations } from './types';
 
-// Using the standard export URL with a GID parameter for reliability
+// Main video data tab
 export const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1L_U_qYZirPKWzAr5M6OFCf84A2sWaWphYvEsHMySo-w/export?format=csv&gid=0';
+
+// Log tab for update timestamp
+export const LOG_GID = '133400713';
+export const LOG_SHEET_URL = `https://docs.google.com/spreadsheets/d/1L_U_qYZirPKWzAr5M6OFCf84A2sWaWphYvEsHMySo-w/export?format=csv&gid=${LOG_GID}`;
 
 export const TRANSLATIONS: Translations = {
   title: '2026 农历新年歌曲浏览',
-  subtitle: '马来西亚 YouTube 新年歌集锦',
+  subtitle: 'Last data update:',
   totalVideos: '新年歌总数',
   totalViews: '总浏览量',
   totalLikes: '总点赞数',

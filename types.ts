@@ -17,6 +17,7 @@ export interface VideoData {
   TrendingRank: number;
   RankMomentum: number;
   CreativeAdvice: string;
+  LastDataUpdate?: string;
 }
 
 export interface Translations {
