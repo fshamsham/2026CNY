@@ -250,7 +250,7 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t }) => {
                   <div 
                     key={i} 
                     onClick={() => setSelectedDayVideos({ date: formatDateForModal(d), videos: [v] })}
-                    className="bg-white rounded-[1.8rem] md:rounded-[2.5rem] p-4 md:p-6 flex gap-4 md:gap-6 border border-gray-100 hover:border-red-600/20 hover:shadow-2xl hover:shadow-red-900/5 transition-all duration-500 cursor-pointer group relative overflow-hidden active:scale-[0.98]"
+                    className="bg-white rounded-[1.8rem] md:rounded-[2.5rem] p-6 md:p-10 flex gap-4 md:gap-6 border border-gray-100 hover:border-red-600/20 hover:shadow-2xl hover:shadow-red-900/5 transition-all duration-500 cursor-pointer group relative overflow-hidden active:scale-[0.98]"
                   >
                     <div className="relative w-28 md:w-40 aspect-video shrink-0">
                       <img src={v.Thumbnail} className="w-full h-full rounded-xl md:rounded-2xl object-cover border border-gray-50 shadow-sm transition-transform duration-700 group-hover:scale-105" alt="thumb" />
@@ -261,7 +261,7 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t }) => {
                       </div>
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
-                      <h5 className="font-black text-gray-900 line-clamp-2 text-sm md:text-lg leading-tight mb-2 group-hover:text-red-600 transition-colors">{v.VideoTitle}</h5>
+                      <h5 className="font-black text-gray-900 line-clamp-3 text-sm md:text-lg leading-tight mb-2 group-hover:text-red-600 transition-colors">{v.VideoTitle}</h5>
                       <div className="flex items-center gap-1.5 md:gap-2">
                         <div className="w-4 h-4 md:w-5 md:h-5 rounded-md bg-red-50 overflow-hidden border border-red-100 shrink-0">
                           <img src={v.ChannelAvatar} className="w-full h-full object-cover" alt="avatar" />
@@ -292,7 +292,6 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t }) => {
             <div className="flex items-center gap-2">
               <div className="w-6 md:w-8 h-px bg-red-600/30"></div>
               <p className="text-red-900/60 font-black text-base md:text-xl uppercase tracking-[0.1em] md:tracking-[0.2em]">
-                 <span className="hidden md:inline">{t.totalVideos}: </span>
                  <span className="text-red-600">{monthVideos.length}</span> {t.videos}
               </p>
             </div>

@@ -27,15 +27,15 @@ const RankItem: React.FC<{
 }> = ({ video, currentRank, globalViewRank, metricLabel, metricValue, isDate, onClick, t }) => (
   <div 
     onClick={onClick}
-    className="group flex items-center gap-4 md:gap-8 py-5 md:py-8 transition-all duration-300 hover:bg-red-50/30 cursor-pointer px-4 md:px-10"
+    className="group flex items-center gap-4 md:gap-10 py-6 md:py-10 transition-all duration-300 hover:bg-red-50/30 cursor-pointer px-4 md:px-12"
   >
     {/* Thumbnail with Rank Overlay */}
-    <div className="relative w-32 md:w-56 aspect-video rounded-[1rem] md:rounded-[1.8rem] overflow-hidden shrink-0 border border-gray-100 shadow-sm">
+    <div className="relative w-40 md:w-72 aspect-video rounded-[1.2rem] md:rounded-[2.2rem] overflow-hidden shrink-0 border border-gray-100 shadow-sm">
       <img src={video.Thumbnail} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="thumb" />
       <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors"></div>
       
       {/* Rank Badge */}
-      <div className={`absolute top-1 left-1 md:top-2 md:left-2 w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-lg md:rounded-xl font-black text-xs md:text-sm shadow-lg backdrop-blur-md border border-white/20
+      <div className={`absolute top-1.5 left-1.5 md:top-3 md:left-3 w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-lg md:rounded-2xl font-black text-xs md:text-base shadow-lg backdrop-blur-md border border-white/20
         ${currentRank === 1 ? 'bg-amber-500 text-white' : 
           currentRank === 2 ? 'bg-slate-500 text-white' : 
           currentRank === 3 ? 'bg-orange-500 text-white' : 'bg-red-900/80 text-white'}`}
@@ -46,20 +46,20 @@ const RankItem: React.FC<{
 
     {/* Content */}
     <div className="flex-1 min-w-0">
-      <h4 className="font-black text-gray-900 text-lg md:text-2xl line-clamp-1 group-hover:text-red-600 transition-colors leading-tight mb-1 md:mb-2">
+      <h4 className="font-black text-gray-900 text-base md:text-xl line-clamp-2 group-hover:text-red-600 transition-colors leading-tight mb-1.5 md:mb-3">
         {video.VideoTitle}
       </h4>
-      <p className="text-[11px] md:text-xs text-red-900/40 uppercase font-black tracking-[0.1em] md:tracking-[0.2em] truncate mb-1.5 md:mb-3">
+      <p className="text-[11px] md:text-xs text-red-900/40 uppercase font-black tracking-[0.1em] md:tracking-[0.2em] truncate mb-2 md:mb-4">
         {video.ChannelName}
       </p>
       
-      <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
+      <div className="flex flex-col md:flex-row md:items-center gap-2.5 md:gap-4">
         <div className="flex items-baseline gap-2">
-          <span className="text-xl md:text-xl font-black text-red-600 tabular-nums leading-none tracking-tighter">
+          <span className="text-xl md:text-2xl font-black text-red-600 tabular-nums leading-none tracking-tighter">
             {metricValue}
           </span>
           {metricLabel && (
-            <span className="text-xs md:text-[12px] font-bold text-red-900/60 uppercase tracking-tight">
+            <span className="text-xs md:text-[13px] font-bold text-red-900/60 uppercase tracking-tight">
               {metricLabel}
             </span>
           )}
@@ -67,8 +67,8 @@ const RankItem: React.FC<{
 
         <span className="hidden md:block text-red-900/20 font-bold">•</span>
         <div className="flex items-center gap-1.5 opacity-60">
-          <Eye size={14} className="md:size-3.5 text-red-600/80" />
-          <span className="text-xs md:text-[11px] text-red-950 font-black uppercase tracking-wider">
+          <Eye size={14} className="md:size-4 text-red-600/80" />
+          <span className="text-xs md:text-[12px] text-red-950 font-black uppercase tracking-wider">
              {t.totalViews} #{globalViewRank}
           </span>
         </div>

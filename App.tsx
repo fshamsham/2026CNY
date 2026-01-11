@@ -5,13 +5,14 @@ import { fetchVideoData } from './services/dataService';
 import { MetricsSection } from './components/MetricsSection';
 import { RankingSection } from './components/RankingSection';
 import { CalendarExplorer } from './components/CalendarExplorer';
-import { Music, Sparkles, Star, AlertCircle, RefreshCw, CalendarDays } from 'lucide-react';
+import { Music, Sparkles, Star, AlertCircle, RefreshCw, CalendarDays, ChevronUp } from 'lucide-react';
 
 const App: React.FC = () => {
   const [videos, setVideos] = useState<VideoData[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showGoTop, setShowGoTop] = useState(false);
 
   const t = TRANSLATIONS;
 
@@ -38,6 +39,22 @@ const App: React.FC = () => {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 500) {
+        setShowGoTop(true);
+      } else {
+        setShowGoTop(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   if (loading) {
     return (
@@ -148,6 +165,18 @@ const App: React.FC = () => {
           </div>
         </section>
       </main>
+
+      {/* Go To Top Button */}
+      <button
+        onClick={scrollToTop}
+        className={`fixed bottom-6 right-6 md:bottom-10 md:right-10 z-[60] bg-red-600 hover:bg-red-700 text-white p-3 md:p-4 rounded-full shadow-2xl transition-all duration-500 transform border-2 border-white/20 hover:scale-110 active:scale-90 hover:shadow-red-900/40 flex items-center justify-center group ${
+          showGoTop ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'
+        }`}
+        aria-label="Go to Top"
+      >
+        <ChevronUp size={24} className="group-hover:-translate-y-1 transition-transform" />
+        <div className="absolute -inset-2 bg-red-600/20 rounded-full blur-xl animate-pulse group-hover:bg-amber-500/30"></div>
+      </button>
 
       <footer className="mt-16 md:mt-32 text-center text-red-900/20 text-[9px] md:text-[10px] px-6 uppercase tracking-[0.15em] md:tracking-[0.4em] font-black relative z-10 max-w-full overflow-hidden">
       </footer>
