@@ -5,7 +5,7 @@ import { fetchVideoData } from './services/dataService';
 import { MetricsSection } from './components/MetricsSection';
 import { RankingSection } from './components/RankingSection';
 import { CalendarExplorer } from './components/CalendarExplorer';
-import { Music, Sparkles, Star, AlertCircle, RefreshCw, CalendarDays, ChevronUp } from 'lucide-react';
+import { Music, Sparkles, Star, AlertCircle, RefreshCw, ChevronUp } from 'lucide-react';
 
 const App: React.FC = () => {
   const [videos, setVideos] = useState<VideoData[]>([]);
@@ -142,12 +142,12 @@ const App: React.FC = () => {
         </section>
 
         {/* Ranking Section */}
-        <section className="w-[90%] mx-auto max-w-[1800px] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+        <section className="w-[90%] mx-auto max-w-[1800px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
           <RankingSection videos={videos} t={t} />
         </section>
 
         {/* Calendar Section */}
-        <section className="w-[90%] mx-auto max-w-[1800px] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300 pb-20">
+        <section className="w-[90%] mx-auto max-w-[1800px] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200 pb-20">
           <div className="mb-8 flex flex-col items-center justify-center text-center">
             <div className="flex items-center gap-2 md:gap-3 mb-2">
               <Sparkles className="text-amber-500 animate-pulse w-4 h-4 md:w-5 md:h-5" />
