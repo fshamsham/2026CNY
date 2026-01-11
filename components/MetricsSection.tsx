@@ -54,7 +54,9 @@ export const MetricsSection: React.FC<Props> = ({ videos, t }) => {
           </div>
           
           <div className="relative z-10 pt-4 md:pt-6">
-            <p className="text-gray-400 text-[10px] md:text-xs font-black uppercase tracking-[0.15em] mb-1.5 md:mb-2 pr-8 whitespace-normal leading-tight">{stat.label}</p>
+            <p className="text-red-900/40 text-sm md:text-base font-black uppercase tracking-[0.05em] md:tracking-[0.15em] mb-1.5 md:mb-2 pr-8 whitespace-normal leading-tight">
+              {stat.label}
+            </p>
             <h3 className="text-2xl md:text-4xl font-black text-red-950 tracking-tighter">
               <Counter value={stat.value} />
             </h3>
