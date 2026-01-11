@@ -136,7 +136,6 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t }) => {
       const isToday = new Date().toDateString() === new Date(currentDate.getFullYear(), currentDate.getMonth(), d).toDateString();
       const isHovered = hoveredDay === d;
       
-      // Limit to 2 titles on mobile, 3 thumbnails on desktop
       const limit = isMobileView ? 2 : 3;
       const displayVids = dayVids.slice(0, limit);
       const remaining = dayVids.length - limit;
@@ -159,11 +158,11 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t }) => {
           )}
 
           <div className="flex justify-between items-start relative z-10">
-            <span className={`text-[10px] md:text-lg font-black tracking-tighter ${dayVids.length > 0 ? 'text-red-900' : 'text-gray-300'}`}>
+            <span className={`text-sm md:text-lg font-black tracking-tighter ${dayVids.length > 0 ? 'text-red-900' : 'text-gray-300'}`}>
               {d}
             </span>
             {dayVids.length > 0 && (
-              <span className="bg-red-600 text-white text-[7px] md:text-[10px] px-1 md:px-2 py-0.5 rounded-sm md:rounded-lg font-black shadow-md md:shadow-lg shadow-red-200">
+              <span className="bg-red-600 text-white text-[9px] md:text-[10px] px-1 md:px-2 py-0.5 rounded-sm md:rounded-lg font-black shadow-md md:shadow-lg shadow-red-200">
                 {dayVids.length}
               </span>
             )}
@@ -171,21 +170,19 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t }) => {
 
           <div className="flex flex-col gap-0.5 relative z-10 overflow-hidden mt-auto pb-0.5">
             {isMobileView ? (
-              // Mobile View: Title Rows
               <>
                 {displayVids.map((v, i) => (
-                  <div key={i} className="text-[6px] text-red-900/60 font-bold truncate leading-tight bg-red-50/50 px-1 rounded-sm">
+                  <div key={i} className="text-[7px] text-red-900/60 font-bold truncate leading-tight bg-red-50/50 px-1 rounded-sm">
                     {v.VideoTitle}
                   </div>
                 ))}
                 {remaining > 0 && (
-                  <div className="text-[6px] text-red-600 font-black uppercase text-right mt-0.5 px-1">
+                  <div className="text-[7px] text-red-600 font-black uppercase text-right mt-0.5 px-1">
                     +{remaining}
                   </div>
                 )}
               </>
             ) : (
-              // Desktop View: Thumbnails
               <div className="flex -space-x-3 items-end overflow-hidden flex-nowrap">
                 {displayVids.map((v, i) => (
                   <div key={i} className="relative group/thumb shrink-0">
@@ -227,7 +224,7 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t }) => {
           <div className="w-16 h-16 bg-gray-50 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6">
              <Info size={32} className="text-gray-200" />
           </div>
-          <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px]">{t.noVideos}</p>
+          <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-xs">{t.noVideos}</p>
         </div>
       );
     }
@@ -240,11 +237,11 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t }) => {
             <div key={d} className="animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="flex items-center gap-4 md:gap-6 mb-6 md:mb-8">
                 <div className="bg-red-600 text-white px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl flex flex-col items-center justify-center font-black shadow-2xl shadow-red-200 transform hover:scale-105 transition-transform cursor-default">
-                  <span className="text-[8px] md:text-[10px] uppercase leading-none mb-1 opacity-70 tracking-widest">{monthNumber}</span>
-                  <span className="text-xl md:text-3xl leading-none">{d}</span>
+                  <span className="text-[10px] md:text-[10px] uppercase leading-none mb-1 opacity-70 tracking-widest">{monthNumber}</span>
+                  <span className="text-2xl md:text-3xl leading-none">{d}</span>
                 </div>
                 <div className="h-px flex-1 bg-gradient-to-r from-red-100 to-transparent"></div>
-                <h4 className="font-black text-red-900/20 text-[9px] md:text-[10px] uppercase tracking-[0.3em] md:tracking-[0.4em] whitespace-nowrap">
+                <h4 className="font-black text-red-900/20 text-[10px] md:text-[10px] uppercase tracking-[0.3em] md:tracking-[0.4em] whitespace-nowrap">
                   {vids.length} {t.videos}
                 </h4>
               </div>
@@ -259,17 +256,17 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t }) => {
                       <img src={v.Thumbnail} className="w-full h-full rounded-xl md:rounded-2xl object-cover border border-gray-50 shadow-sm transition-transform duration-700 group-hover:scale-105" alt="thumb" />
                       <div className="absolute inset-0 bg-black/5 group-hover:bg-red-600/10 transition-colors rounded-xl md:rounded-2xl flex items-center justify-center">
                         <div className="bg-white/90 p-2 md:p-2.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
-                           <Play size={14} className="text-red-600 md:size-18" fill="currentColor" />
+                           <Play size={16} className="text-red-600" fill="currentColor" />
                         </div>
                       </div>
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
-                      <h5 className="font-black text-gray-900 line-clamp-2 text-sm md:text-lg leading-tight mb-1 md:mb-2 group-hover:text-red-600 transition-colors">{v.VideoTitle}</h5>
+                      <h5 className="font-black text-gray-900 line-clamp-2 text-sm md:text-lg leading-tight mb-2 group-hover:text-red-600 transition-colors">{v.VideoTitle}</h5>
                       <div className="flex items-center gap-1.5 md:gap-2">
                         <div className="w-4 h-4 md:w-5 md:h-5 rounded-md bg-red-50 overflow-hidden border border-red-100 shrink-0">
                           <img src={v.ChannelAvatar} className="w-full h-full object-cover" alt="avatar" />
                         </div>
-                        <p className="text-[9px] md:text-[11px] text-red-900/60 font-black uppercase tracking-wider truncate">{v.ChannelName}</p>
+                        <p className="text-[10px] md:text-[11px] text-red-900/60 font-black uppercase tracking-wider truncate">{v.ChannelName}</p>
                       </div>
                     </div>
                   </div>
@@ -291,31 +288,34 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t }) => {
              <span className="text-red-600/20 font-light">/</span> 
              <span>{currentDate.getFullYear()}</span>
           </h2>
-          <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-2 md:gap-4 mt-3 md:mt-4">
+          <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-2 md:gap-4 mt-4 md:mt-4">
             <div className="flex items-center gap-2">
               <div className="w-6 md:w-8 h-px bg-red-600/30"></div>
-              <p className="text-red-900/60 font-black text-sm md:text-xl uppercase tracking-[0.1em] md:tracking-[0.2em]">
+              <p className="text-red-900/60 font-black text-base md:text-xl uppercase tracking-[0.1em] md:tracking-[0.2em]">
                  <span className="hidden md:inline">{t.totalVideos}: </span>
                  <span className="text-red-600">{monthVideos.length}</span> {t.videos}
               </p>
             </div>
             
-            <div className="flex bg-gray-100/80 p-1 rounded-xl md:rounded-2xl border border-gray-200">
-              <button 
-                onClick={() => setViewMode('calendar')}
-                className={`p-1.5 md:p-2 rounded-lg md:rounded-xl transition-all ${viewMode === 'calendar' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-400 hover:text-red-900'}`}
-                title="Calendar View"
-              >
-                <CalendarIcon size={16} className="md:size-5" />
-              </button>
-              <button 
-                onClick={() => setViewMode('list')}
-                className={`p-1.5 md:p-2 rounded-lg md:rounded-xl transition-all ${viewMode === 'list' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-400 hover:text-red-900'}`}
-                title="List View"
-              >
-                <ListIcon size={16} className="md:size-5" />
-              </button>
-            </div>
+            {/* Toggle is only visible on desktop devices */}
+            {!isMobileView && (
+              <div className="flex bg-gray-100/80 p-1 rounded-xl md:rounded-2xl border border-gray-200">
+                <button 
+                  onClick={() => setViewMode('calendar')}
+                  className={`p-2 md:p-2 rounded-lg md:rounded-xl transition-all ${viewMode === 'calendar' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-400 hover:text-red-900'}`}
+                  title="Calendar View"
+                >
+                  <CalendarIcon size={18} className="md:size-5" />
+                </button>
+                <button 
+                  onClick={() => setViewMode('list')}
+                  className={`p-2 md:p-2 rounded-lg md:rounded-xl transition-all ${viewMode === 'list' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-400 hover:text-red-900'}`}
+                  title="List View"
+                >
+                  <ListIcon size={18} className="md:size-5" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
         
@@ -323,17 +323,17 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t }) => {
           <button 
             onClick={handlePrevMonth}
             disabled={currentMonthIdx <= 0}
-            className={`p-2.5 md:p-3 rounded-lg md:rounded-[1.2rem] transition-all ${currentMonthIdx <= 0 ? 'text-gray-300 cursor-not-allowed' : 'text-red-600 hover:bg-white hover:shadow-md active:scale-95'}`}
+            className={`p-3 md:p-3 rounded-lg md:rounded-[1.2rem] transition-all ${currentMonthIdx <= 0 ? 'text-gray-300 cursor-not-allowed' : 'text-red-600 hover:bg-white hover:shadow-md active:scale-95'}`}
           >
-            <ChevronLeft size={20} className="md:w-6 md:h-6" />
+            <ChevronLeft size={24} className="md:w-6 md:h-6" />
           </button>
           <div className="w-px h-6 md:h-8 bg-red-200 mx-2 md:mx-3"></div>
           <button 
             onClick={handleNextMonth}
             disabled={currentMonthIdx >= availableMonths.length - 1}
-            className={`p-2.5 md:p-3 rounded-lg md:rounded-[1.2rem] transition-all ${currentMonthIdx >= availableMonths.length - 1 ? 'text-gray-300 cursor-not-allowed' : 'text-red-600 hover:bg-white hover:shadow-md active:scale-95'}`}
+            className={`p-3 md:p-3 rounded-lg md:rounded-[1.2rem] transition-all ${currentMonthIdx >= availableMonths.length - 1 ? 'text-gray-300 cursor-not-allowed' : 'text-red-600 hover:bg-white hover:shadow-md active:scale-95'}`}
           >
-            <ChevronRight size={20} className="md:w-6 md:h-6" />
+            <ChevronRight size={24} className="md:w-6 md:h-6" />
           </button>
         </div>
       </div>
@@ -344,7 +344,7 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t }) => {
         <div className="animate-in fade-in duration-1000 overflow-visible">
           <div className="grid grid-cols-7 gap-0 border-t border-l border-gray-100 rounded-t-[1rem] md:rounded-t-3xl overflow-hidden">
             {[t.monday, t.tuesday, t.wednesday, t.thursday, t.friday, t.saturday, t.sunday].map(day => (
-              <div key={day} className="text-center py-2 md:py-6 text-[7px] md:text-[10px] font-black text-red-900/30 uppercase tracking-tight md:tracking-[0.5em] border-r bg-gray-50/30">
+              <div key={day} className="text-center py-3 md:py-6 text-[10px] md:text-xs font-black text-red-900/30 uppercase tracking-tight md:tracking-[0.5em] border-r bg-gray-50/30">
                 {day}
               </div>
             ))}

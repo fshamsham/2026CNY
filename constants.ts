@@ -6,7 +6,7 @@ export const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1L_U_qYZirPKWzA
 export const TRANSLATIONS: Translations = {
   title: '2026 农历新年歌曲浏览',
   subtitle: '马来西亚 YouTube 新年歌集锦',
-  totalVideos: '新年歌收入总数',
+  totalVideos: '新年歌总数',
   totalViews: '总浏览量',
   totalLikes: '总点赞数',
   totalComments: '总评论数',

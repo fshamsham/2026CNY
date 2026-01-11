@@ -34,8 +34,8 @@ const RankItem: React.FC<{
       <img src={video.Thumbnail} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="thumb" />
       <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors"></div>
       
-      {/* Rank Badge - Increased size for mobile */}
-      <div className={`absolute top-1 left-1 md:top-2 md:left-2 w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-lg md:rounded-xl font-black text-[11px] md:text-sm shadow-lg backdrop-blur-md border border-white/20
+      {/* Rank Badge */}
+      <div className={`absolute top-1 left-1 md:top-2 md:left-2 w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-lg md:rounded-xl font-black text-xs md:text-sm shadow-lg backdrop-blur-md border border-white/20
         ${currentRank === 1 ? 'bg-amber-500 text-white' : 
           currentRank === 2 ? 'bg-slate-500 text-white' : 
           currentRank === 3 ? 'bg-orange-500 text-white' : 'bg-red-900/80 text-white'}`}
@@ -49,7 +49,7 @@ const RankItem: React.FC<{
       <h4 className="font-black text-gray-900 text-lg md:text-2xl line-clamp-1 group-hover:text-red-600 transition-colors leading-tight mb-1 md:mb-2">
         {video.VideoTitle}
       </h4>
-      <p className="text-[10px] md:text-[11px] text-red-900/40 uppercase font-black tracking-[0.15em] md:tracking-[0.2em] truncate mb-1.5 md:mb-3">
+      <p className="text-[11px] md:text-xs text-red-900/40 uppercase font-black tracking-[0.1em] md:tracking-[0.2em] truncate mb-1.5 md:mb-3">
         {video.ChannelName}
       </p>
       
@@ -59,7 +59,7 @@ const RankItem: React.FC<{
             {metricValue}
           </span>
           {metricLabel && (
-            <span className="text-[12px] md:text-[12px] font-bold text-red-900/60 uppercase tracking-tight">
+            <span className="text-xs md:text-[12px] font-bold text-red-900/60 uppercase tracking-tight">
               {metricLabel}
             </span>
           )}
@@ -68,7 +68,7 @@ const RankItem: React.FC<{
         <span className="hidden md:block text-red-900/20 font-bold">•</span>
         <div className="flex items-center gap-1.5 opacity-60">
           <Eye size={14} className="md:size-3.5 text-red-600/80" />
-          <span className="text-[12px] md:text-[11px] text-red-950 font-black uppercase tracking-wider">
+          <span className="text-xs md:text-[11px] text-red-950 font-black uppercase tracking-wider">
              {t.totalViews} #{globalViewRank}
           </span>
         </div>
@@ -155,7 +155,7 @@ export const RankingSection: React.FC<Props> = ({ videos, t }) => {
       <div className="flex flex-col items-center text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 border border-amber-100 mb-6">
           <Trophy size={14} className="text-amber-600" />
-          <span className="text-amber-700 font-black text-[9px] uppercase tracking-[0.3em]">Leaderboard</span>
+          <span className="text-amber-700 font-black text-[10px] uppercase tracking-[0.3em]">Leaderboard</span>
         </div>
         <h2 className="text-3xl md:text-6xl font-black text-red-950 font-cny tracking-tight px-4 mb-10">
           {t.rankingSectionTitle}
@@ -167,7 +167,7 @@ export const RankingSection: React.FC<Props> = ({ videos, t }) => {
             <button
               key={filter.id}
               onClick={() => setActiveFilter(filter.id as FilterType)}
-              className={`flex items-center gap-2 px-5 py-2.5 md:px-7 md:py-4 rounded-full text-[10px] md:text-sm font-black uppercase tracking-wider transition-all duration-300 border ${
+              className={`flex items-center gap-2 px-5 py-3 md:px-7 md:py-4 rounded-full text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-300 border ${
                 activeFilter === filter.id
                   ? 'bg-red-600 border-red-600 text-white shadow-xl shadow-red-200 active:scale-95'
                   : 'bg-white border-gray-100 text-red-900/40 hover:border-red-600/20 hover:text-red-600'
@@ -181,8 +181,8 @@ export const RankingSection: React.FC<Props> = ({ videos, t }) => {
 
         {/* Dynamic Filter Description Section */}
         <div className="w-full max-w-4xl px-6 mb-8 animate-in fade-in slide-in-from-top-2 duration-500">
-          <div className="bg-red-50/50 rounded-2xl md:rounded-full px-6 py-3 border border-red-100">
-            <p className="text-[11px] md:text-sm text-red-950/70 font-medium text-center leading-relaxed">
+          <div className="bg-red-50/50 rounded-2xl md:rounded-full px-6 py-4 border border-red-100">
+            <p className="text-sm md:text-sm text-red-950/70 font-medium text-center leading-relaxed">
               {filterDescriptions[activeFilter]}
             </p>
           </div>
@@ -192,13 +192,13 @@ export const RankingSection: React.FC<Props> = ({ videos, t }) => {
         <div className="flex items-center bg-gray-100/50 p-1 rounded-full border border-gray-100">
           <button 
             onClick={() => setLimit(5)}
-            className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${limit === 5 ? 'bg-white text-red-600 shadow-sm' : 'text-gray-400 hover:text-red-900'}`}
+            className={`px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all ${limit === 5 ? 'bg-white text-red-600 shadow-sm' : 'text-gray-400 hover:text-red-900'}`}
           >
             Top 5
           </button>
           <button 
             onClick={() => setLimit(10)}
-            className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${limit === 10 ? 'bg-white text-red-600 shadow-sm' : 'text-gray-400 hover:text-red-900'}`}
+            className={`px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all ${limit === 10 ? 'bg-white text-red-600 shadow-sm' : 'text-gray-400 hover:text-red-900'}`}
           >
             Top 10
           </button>
