@@ -158,15 +158,16 @@ const App: React.FC = () => {
                 <Music className="text-white w-5 h-5 md:w-6 md:h-6" />
               </div>
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-1.5 md:gap-2">
               <h1 className="text-lg md:text-2xl font-black text-red-900 font-cny leading-none tracking-tight">
                 {t.title}
               </h1>
-              <div className="flex items-center gap-2">
-                <span className="h-px w-3 md:w-4 bg-red-600/30"></span>
-                <p className="text-red-900/60 text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] md:tracking-[0.25em]">
-                  {t.subtitle} <span className="text-red-600">{lastUpdate}</span>
-                </p>
+              <div className="flex items-start gap-2">
+                <span className="h-px w-3 md:w-4 bg-red-600/30 mt-1.5 md:mt-2.5"></span>
+                <div className="flex flex-col md:flex-row md:items-center text-red-900/60 text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] md:tracking-[0.25em] leading-tight md:leading-none">
+                  <span>{t.subtitle}</span>
+                  <span className="text-red-600 mt-0.5 md:mt-0 md:ml-1.5">{lastUpdate}</span>
+                </div>
               </div>
             </div>
           </div>
