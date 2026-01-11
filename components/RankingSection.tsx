@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { VideoData, Translations } from '../types';
 import { Trophy, TrendingUp, Eye, Heart, Calendar, ExternalLink } from 'lucide-react';
 import { VideoModal } from './VideoModal';
@@ -6,6 +6,7 @@ import { VideoModal } from './VideoModal';
 interface Props {
   videos: VideoData[];
   t: Translations;
+  onModalToggle?: (isOpen: boolean) => void;
 }
 
 const compactFormatter = new Intl.NumberFormat('en-US', {
@@ -77,10 +78,17 @@ const RankItem: React.FC<{
   </div>
 );
 
-export const RankingSection: React.FC<Props> = ({ videos, t }) => {
+export const RankingSection: React.FC<Props> = ({ videos, t, onModalToggle }) => {
   const [activeFilter, setActiveFilter] = useState<FilterType>('total');
   const [limit, setLimit] = useState<5 | 10>(5);
   const [selection, setSelection] = useState<{ video: VideoData; title: string } | null>(null);
+
+  useEffect(() => {
+    if (selection) {
+      onModalToggle?.(true);
+      return () => onModalToggle?.(false);
+    }
+  }, [selection, onModalToggle]);
 
   const viewRankMap = useMemo(() => {
     const sortedByViews = [...videos].sort((a, b) => b.Views - a.Views);

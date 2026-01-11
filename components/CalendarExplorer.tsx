@@ -6,6 +6,7 @@ import { VideoModal } from './VideoModal';
 interface Props {
   videos: VideoData[];
   t: Translations;
+  onModalToggle?: (isOpen: boolean) => void;
 }
 
 const DayHoverCard: React.FC<{ videos: VideoData[] }> = ({ videos }) => {
@@ -37,11 +38,18 @@ const DayHoverCard: React.FC<{ videos: VideoData[] }> = ({ videos }) => {
   );
 };
 
-export const CalendarExplorer: React.FC<Props> = ({ videos, t }) => {
+export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) => {
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
   const [selectedDayVideos, setSelectedDayVideos] = useState<{ date: string, videos: VideoData[] } | null>(null);
   const [hoveredDay, setHoveredDay] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (selectedDayVideos) {
+      onModalToggle?.(true);
+      return () => onModalToggle?.(false);
+    }
+  }, [selectedDayVideos, onModalToggle]);
 
   // Calculate unique months that have videos
   const availableMonths = useMemo(() => {

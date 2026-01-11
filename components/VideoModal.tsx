@@ -160,6 +160,11 @@ export const VideoModal: React.FC<Props> = ({ isOpen, onClose, videos, title, t 
                       <span className="text-xs md:text-xs font-black tabular-nums">
                         #{video.ViewRank} <span className="text-[10px] md:text-[10px] opacity-40 ml-0.5 uppercase tracking-tighter">Total Views Rank</span>
                       </span>
+                      {/* Tooltip Content */}
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-3 py-2 bg-gray-900 text-white text-[10px] font-bold rounded-xl opacity-0 group-hover/tooltip:opacity-100 pointer-events-none transition-all duration-300 translate-y-2 group-hover/tooltip:translate-y-0 whitespace-nowrap z-30 shadow-2xl border border-white/10">
+                        基于 YouTube 累计总播放量的全马排名
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-gray-900"></div>
+                      </div>
                     </div>
 
                     <div className="relative group/tooltip flex items-center gap-1.5 md:gap-2 bg-orange-50 px-2.5 md:px-3 py-1.5 md:py-2 rounded-lg md:rounded-xl text-orange-900 border border-orange-100 shadow-sm cursor-help">
@@ -167,6 +172,11 @@ export const VideoModal: React.FC<Props> = ({ isOpen, onClose, videos, title, t 
                       <span className="text-xs md:text-xs font-black tabular-nums">
                         #{video.TrendingRank} <span className="text-[10px] md:text-[10px] opacity-40 ml-0.5 uppercase tracking-tighter">Daily Views Rank</span>
                       </span>
+                      {/* Tooltip Content */}
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-3 py-2 bg-gray-900 text-white text-[10px] font-bold rounded-xl opacity-0 group-hover/tooltip:opacity-100 pointer-events-none transition-all duration-300 translate-y-2 group-hover/tooltip:translate-y-0 whitespace-nowrap z-30 shadow-2xl border border-white/10">
+                        基于近期每日观看增量的实时人气排名
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-gray-900"></div>
+                      </div>
                     </div>
                   </div>
 

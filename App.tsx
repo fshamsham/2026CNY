@@ -13,8 +13,15 @@ const App: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showGoTop, setShowGoTop] = useState(false);
+  const [modalOpenCount, setModalOpenCount] = useState(0);
 
   const t = TRANSLATIONS;
+
+  const isModalOpen = modalOpenCount > 0;
+
+  const handleModalToggle = useCallback((isOpen: boolean) => {
+    setModalOpenCount(prev => isOpen ? prev + 1 : Math.max(0, prev - 1));
+  }, []);
 
   const loadData = useCallback(async (isSilent = false) => {
     if (!isSilent) setLoading(true);
@@ -51,6 +58,14 @@ const App: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }, [isModalOpen]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -94,12 +109,12 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen overflow-x-hidden relative selection:bg-red-100 selection:text-red-900 text-gray-900 pb-12">
       {/* Decorative background elements */}
-      <div className="fixed top-0 left-0 w-full h-full pointer-events-none opacity-50 z-0 overflow-hidden">
+      <div className={`fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden transition-opacity duration-700 ${isModalOpen ? 'opacity-0' : 'opacity-50'}`}>
         <div className="absolute -top-20 -left-20 w-96 h-96 bg-red-600/5 rounded-full blur-[100px]"></div>
         <div className="absolute top-1/2 -right-20 w-80 h-80 bg-amber-500/5 rounded-full blur-[80px]"></div>
       </div>
 
-      <nav className="w-full pt-6 md:pt-8 relative z-[50]">
+      <nav className={`w-full pt-6 md:pt-8 relative z-[50] transition-all duration-700 ${isModalOpen ? 'opacity-0 pointer-events-none translate-y-[-20px]' : 'opacity-100'}`}>
         <div className="w-[90%] mx-auto max-w-[1800px] glass-light rounded-[2rem] md:rounded-[2.5rem] px-5 py-3 md:px-6 md:py-4 flex justify-between items-center shadow-xl shadow-red-900/5 border-white/80">
           <div className="flex items-center gap-3 md:gap-4">
             <div className="relative group">
@@ -143,7 +158,7 @@ const App: React.FC = () => {
 
         {/* Ranking Section */}
         <section className="w-[90%] mx-auto max-w-[1800px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          <RankingSection videos={videos} t={t} />
+          <RankingSection videos={videos} t={t} onModalToggle={handleModalToggle} />
         </section>
 
         {/* Calendar Section */}
@@ -161,7 +176,7 @@ const App: React.FC = () => {
           </div>
           
           <div className="relative w-full">
-            <CalendarExplorer videos={videos} t={t} />
+            <CalendarExplorer videos={videos} t={t} onModalToggle={handleModalToggle} />
           </div>
         </section>
       </main>
@@ -170,7 +185,7 @@ const App: React.FC = () => {
       <button
         onClick={scrollToTop}
         className={`fixed bottom-6 right-6 md:bottom-10 md:right-10 z-[60] bg-red-600 hover:bg-red-700 text-white p-3 md:p-4 rounded-full shadow-2xl transition-all duration-500 transform border-2 border-white/20 hover:scale-110 active:scale-90 hover:shadow-red-900/40 flex items-center justify-center group ${
-          showGoTop ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'
+          showGoTop && !isModalOpen ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-50 pointer-events-none'
         }`}
         aria-label="Go to Top"
       >
