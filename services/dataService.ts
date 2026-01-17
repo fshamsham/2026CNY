@@ -60,7 +60,7 @@ export async function fetchVideoData(): Promise<VideoData[]> {
       return [];
     }
 
-    // Attempt to find the header row (sometimes sheets have empty rows at the top)
+    // Attempt to find the header row
     let headerRowIndex = -1;
     for (let i = 0; i < Math.min(rows.length, 20); i++) {
       const rowStr = rows[i].join(',').toLowerCase();
@@ -70,7 +70,6 @@ export async function fetchVideoData(): Promise<VideoData[]> {
       }
     }
 
-    // Default to the first row if no obvious header row found
     if (headerRowIndex === -1) {
       headerRowIndex = 0;
     }
@@ -86,8 +85,11 @@ export async function fetchVideoData(): Promise<VideoData[]> {
 
     const headerMap: Record<string, number> = {};
     headers.forEach((h, i) => {
+      // Create a clean key for easy matching, but keep a fallback for Chinese headers
       const cleanHeader = h.toLowerCase().replace(/[^a-z0-9]/g, '');
       headerMap[cleanHeader] = i;
+      // Also map original headers to handle non-alphanumeric columns like Chinese ones
+      headerMap[h] = i;
     });
 
     const results = dataRows.map((row) => {
@@ -110,17 +112,29 @@ export async function fetchVideoData(): Promise<VideoData[]> {
         TrendingRank: 0,
         RankMomentum: 0,
         CreativeAdvice: '',
-        LastDataUpdate: ''
+        LastDataUpdate: '',
+        HasHorseKey: '',
+        HasHorsePair: ''
       };
 
-      const getVal = (key: string) => {
+      const getVal = (key: string, originalHeader?: string) => {
+        // Try original header first (useful for Chinese columns)
+        if (originalHeader && headerMap[originalHeader] !== undefined) {
+          return row[headerMap[originalHeader]];
+        }
+        // Then try cleaned key
         const cleanKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
         const idx = headerMap[cleanKey];
         return (idx !== undefined && row[idx] !== undefined) ? row[idx] : undefined;
       };
 
       Object.keys(entry).forEach(key => {
-        const value = getVal(key);
+        let value;
+        // Specific mapping for the horse pun columns
+        if (key === 'HasHorseKey') value = getVal(key, '标题有马Key');
+        else if (key === 'HasHorsePair') value = getVal(key, '标题有马Pair');
+        else value = getVal(key);
+
         const lowerKey = key.toLowerCase();
 
         if (numericFields.includes(lowerKey)) {
@@ -132,17 +146,12 @@ export async function fetchVideoData(): Promise<VideoData[]> {
         }
       });
 
-      // Fallback description
       if (!entry.VideoDescription && entry.CreativeAdvice) {
         entry.VideoDescription = entry.CreativeAdvice;
       }
 
       return entry as VideoData;
     }).filter(v => v.VideoTitle && (v.VideoURL || v.Thumbnail));
-
-    if (results.length === 0) {
-      console.warn('No valid video records found after filtering. Raw headers found:', headers);
-    }
 
     return results;
   } catch (error) {

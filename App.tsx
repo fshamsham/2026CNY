@@ -5,6 +5,8 @@ import { fetchVideoData } from './services/dataService';
 import { MetricsSection } from './components/MetricsSection';
 import { RankingSection } from './components/RankingSection';
 import { CalendarExplorer } from './components/CalendarExplorer';
+import { HorseThemedStats } from './components/HorseThemedStats';
+import { HashtagAnalysis } from './components/HashtagAnalysis';
 import { Music, Sparkles, Star, AlertCircle, RefreshCw, ChevronUp } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -149,47 +151,38 @@ const App: React.FC = () => {
         <div className="absolute top-1/2 -right-20 w-80 h-80 bg-amber-500/5 rounded-full blur-[80px]"></div>
       </div>
 
-      <nav className={`w-full pt-6 md:pt-8 relative z-[50] transition-all duration-700 ${isModalOpen ? 'opacity-0 pointer-events-none translate-y-[-20px]' : 'opacity-100'}`}>
-        <div className="w-[90%] mx-auto max-w-[1800px] glass-light rounded-[2rem] md:rounded-[2.5rem] px-5 py-3 md:px-6 md:py-4 flex justify-between items-center shadow-xl shadow-red-900/5 border-white/80">
-          <div className="flex items-center gap-3 md:gap-4">
-            <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-red-600 to-amber-500 rounded-xl md:rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-              <div className="relative bg-red-600 p-2 md:p-2.5 rounded-xl md:rounded-2xl shadow-lg">
-                <Music className="text-white w-5 h-5 md:w-6 md:h-6" />
+      <nav className={`w-full pt-8 md:pt-12 relative z-[50] transition-all duration-700 ${isModalOpen ? 'opacity-0 pointer-events-none translate-y-[-20px]' : 'opacity-100'}`}>
+        <div className="w-[92%] mx-auto max-w-[1800px] glass-light rounded-[2.5rem] md:rounded-[4rem] px-6 py-5 md:px-12 md:py-10 flex justify-between items-center shadow-2xl shadow-red-900/5 border-white/80">
+          <div className="flex items-center gap-5 md:gap-8">
+            <div className="relative group shrink-0">
+              <div className="absolute -inset-2 bg-gradient-to-r from-red-600 to-amber-500 rounded-2xl md:rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+              <div className="relative bg-red-600 p-3 md:p-5 rounded-2xl md:rounded-[2rem] shadow-xl">
+                <Music className="text-white w-6 h-6 md:w-10 md:h-10" />
               </div>
             </div>
-            <div className="flex flex-col gap-1.5 md:gap-2">
-              <h1 className="text-lg md:text-2xl font-black text-red-900 font-cny leading-none tracking-tight">
+            <div className="flex flex-col gap-2 md:gap-4">
+              <h1 className="text-2xl md:text-5xl font-black text-red-900 font-cny leading-none tracking-tighter">
                 {t.title}
               </h1>
-              <div className="flex items-start gap-2">
-                <span className="h-px w-3 md:w-4 bg-red-600/30 mt-1.5 md:mt-2.5"></span>
-                <div className="flex flex-col md:flex-row md:items-center text-red-900/60 text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] md:tracking-[0.25em] leading-tight md:leading-none">
+              <div className="flex items-center gap-3 md:gap-4">
+                <span className="h-px w-4 md:w-8 bg-red-600/30"></span>
+                <div className="flex flex-col md:flex-row md:items-center text-red-900/60 text-[10px] md:text-sm font-black uppercase tracking-[0.2em] md:tracking-[0.4em] leading-tight md:leading-none">
                   <span>{t.subtitle}</span>
-                  <span className="text-red-600 mt-0.5 md:mt-0 md:ml-1.5">{lastUpdate}</span>
+                  <span className="text-red-600 mt-1 md:mt-0 md:ml-3">{lastUpdate}</span>
                 </div>
               </div>
             </div>
           </div>
           
-          <div className="flex items-center gap-2 md:gap-4">
-             <button 
-               onClick={() => loadData(true)}
-               disabled={refreshing}
-               className="group flex items-center gap-2 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white px-3 py-2 md:px-5 md:py-2.5 rounded-xl md:rounded-2xl transition-all shadow-sm border border-red-100 disabled:opacity-50"
-               title="Reload Data"
-             >
-               <RefreshCw size={16} className={`${refreshing ? "animate-spin" : "group-hover:rotate-180"} transition-transform duration-500`} />
-               <span className="text-[10px] md:text-xs font-black uppercase tracking-widest hidden sm:inline">Reload</span>
-             </button>
-             <div className="hidden lg:block text-red-900/20 font-black text-[10px] uppercase tracking-[0.4em] ml-2">
+          <div className="hidden lg:flex items-center gap-4">
+             <div className="text-red-900/20 font-black text-xs md:text-sm uppercase tracking-[0.6em] ml-2">
                 Gong Xi Fa Cai 2026
              </div>
           </div>
         </div>
       </nav>
 
-      <main className="w-full pt-10 md:pt-12 relative z-10 space-y-20 md:space-y-32">
+      <main className="w-full pt-12 md:pt-20 relative z-10 space-y-20 md:space-y-40">
         <section className="w-[90%] mx-auto max-w-[1800px]">
           <MetricsSection videos={videos} t={t} />
         </section>
@@ -200,7 +193,7 @@ const App: React.FC = () => {
         </section>
 
         {/* Calendar Section */}
-        <section className="w-[90%] mx-auto max-w-[1800px] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200 pb-20">
+        <section className="w-[90%] mx-auto max-w-[1800px] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
           <div className="mb-8 flex flex-col items-center justify-center text-center">
             <div className="flex items-center gap-2 md:gap-3 mb-2">
               <Sparkles className="text-amber-500 animate-pulse w-4 h-4 md:w-5 md:h-5" />
@@ -216,6 +209,16 @@ const App: React.FC = () => {
           <div className="relative w-full">
             <CalendarExplorer videos={videos} t={t} onModalToggle={handleModalToggle} />
           </div>
+        </section>
+
+        {/* Horse Pun Stats Section */}
+        <section className="w-[90%] mx-auto max-w-[1800px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
+           <HorseThemedStats videos={videos} />
+        </section>
+
+        {/* Hashtag Spotlight Section */}
+        <section className="w-[90%] mx-auto max-w-[1800px] animate-in fade-in slide-in-from-bottom-8 duration-1000 pb-20">
+           <HashtagAnalysis videos={videos} />
         </section>
       </main>
 

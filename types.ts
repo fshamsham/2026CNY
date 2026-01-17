@@ -18,6 +18,8 @@ export interface VideoData {
   RankMomentum: number;
   CreativeAdvice: string;
   LastDataUpdate?: string;
+  HasHorseKey: string;
+  HasHorsePair: string;
 }
 
 export interface Translations {

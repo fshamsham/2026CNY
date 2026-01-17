@@ -8,7 +8,7 @@ export const LOG_GID = '133400713';
 export const LOG_SHEET_URL = `https://docs.google.com/spreadsheets/d/1L_U_qYZirPKWzAr5M6OFCf84A2sWaWphYvEsHMySo-w/export?format=csv&gid=${LOG_GID}`;
 
 export const TRANSLATIONS: Translations = {
-  title: '2026 马来西亚新年歌曲浏览',
+  title: '2026马来西亚新年歌集锦',
   subtitle: 'Last update',
   totalVideos: '新年歌总数',
   totalViews: '总浏览量',
