@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { VideoData, Translations } from '../types';
-import { ChevronLeft, ChevronRight, Play, Info, Calendar as CalendarIcon, List as ListIcon, Search, X, Sparkles, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Info, Calendar as CalendarIcon, List as ListIcon, Search, X, Sparkles, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { VideoModal } from './VideoModal';
 
 interface Props {
@@ -269,6 +269,7 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
 
     const visibleGroups = groupedVideos.slice(0, visibleGroupsCount);
     const hasMore = groupedVideos.length > visibleGroupsCount;
+    const isExpanded = visibleGroupsCount > 3;
 
     return (
       <div className="space-y-8 md:space-y-12">
@@ -299,13 +300,15 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
                     <div className="relative w-28 md:w-40 aspect-video shrink-0">
                       <img src={v.Thumbnail} className="w-full h-full rounded-xl md:rounded-2xl object-cover border border-gray-50 shadow-sm transition-transform duration-700 group-hover:scale-105" alt="thumb" />
                       <div className="absolute inset-0 bg-black/5 group-hover:bg-red-600/10 transition-colors rounded-xl md:rounded-2xl flex items-center justify-center">
-                        <div className="bg-white/90 p-2 md:p-2.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
+                        <div className="bg-white/90 p-2 md:p-2.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
                            <Play size={16} className="text-red-600" fill="currentColor" />
                         </div>
                       </div>
                     </div>
-                    <div className="flex-1 min-w-0 flex flex-col justify-center">
-                      <h5 className="font-black text-gray-900 line-clamp-3 text-sm md:text-lg leading-tight mb-2 group-hover:text-red-600 transition-colors">{v.VideoTitle}</h5>
+                    <div className="flex-1 min-w-0 flex flex-col justify-center overflow-hidden">
+                      <h5 className="font-black text-gray-900 text-sm md:text-lg leading-tight mb-2 group-hover:text-red-600 transition-colors break-words">
+                        {v.VideoTitle}
+                      </h5>
                       <div className="flex items-center gap-1.5 md:gap-2">
                         <div className="w-4 h-4 md:w-5 md:h-5 rounded-md bg-red-50 overflow-hidden border border-red-100 shrink-0">
                           <img src={v.ChannelAvatar} className="w-full h-full object-cover" alt="avatar" />
@@ -320,14 +323,26 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
           );
         })}
 
-        {hasMore && (
-          <div className="pt-4 flex justify-center">
+        {(hasMore || isExpanded) && (
+          <div className="pt-10 flex justify-center">
             <button 
-              onClick={() => setVisibleGroupsCount(prev => prev + 5)}
-              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-red-200 transition-all active:scale-95 group"
+              onClick={() => {
+                if (hasMore) setVisibleGroupsCount(prev => prev + 10);
+                else setVisibleGroupsCount(3);
+              }}
+              className="group flex items-center justify-center gap-3 bg-red-600 hover:bg-red-700 text-white px-10 py-4 md:py-5 rounded-2xl md:rounded-[1.5rem] font-black text-xs md:text-sm uppercase tracking-[0.2em] shadow-xl shadow-red-900/10 transition-all duration-300 active:scale-95 hover:shadow-red-900/20"
             >
-              <Plus size={16} className="group-hover:rotate-90 transition-transform" />
-              View More
+              {!hasMore ? (
+                <>
+                  <ChevronUp size={18} className="group-hover:-translate-y-0.5 transition-transform" />
+                  {t.showLess}
+                </>
+              ) : (
+                <>
+                  <ChevronDown size={18} className="group-hover:translate-y-0.5 transition-transform" />
+                  {t.showMore}
+                </>
+              )}
             </button>
           </div>
         )}

@@ -7,7 +7,11 @@ import { RankingSection } from './components/RankingSection';
 import { CalendarExplorer } from './components/CalendarExplorer';
 import { HorseThemedStats } from './components/HorseThemedStats';
 import { HashtagAnalysis } from './components/HashtagAnalysis';
-import { Music, Sparkles, Star, AlertCircle, RefreshCw, ChevronUp } from 'lucide-react';
+import { 
+  Music, Sparkles, Star, AlertCircle, RefreshCw, 
+  ChevronUp, Mail, Heart, Compass, Send, 
+  Menu, X, Trophy, BarChart3, Calendar, Zap, Hash
+} from 'lucide-react';
 
 const App: React.FC = () => {
   const [videos, setVideos] = useState<VideoData[]>([]);
@@ -17,6 +21,7 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showGoTop, setShowGoTop] = useState(false);
   const [modalOpenCount, setModalOpenCount] = useState(0);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const t = TRANSLATIONS;
 
@@ -36,7 +41,7 @@ const App: React.FC = () => {
     const ampm = hours >= 12 ? 'PM' : 'AM';
     
     hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
+    hours = hours ? hours : 12; 
     const HH = String(hours).padStart(2, '0');
     
     return `${YYYY}/${MM}/${DD} ${HH}:${minutes} ${ampm}`;
@@ -54,7 +59,6 @@ const App: React.FC = () => {
         throw new Error("No data records found in the source sheet.");
       }
       
-      // Extract the maximum LastDataUpdate from the dataset
       let maxTimeValue = 0;
       let latestDateObj: Date | null = null;
       
@@ -97,16 +101,38 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (isModalOpen) {
+    if (isModalOpen || isMenuOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
-  }, [isModalOpen]);
+  }, [isModalOpen, isMenuOpen]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const scrollToSection = (id: string) => {
+    setIsMenuOpen(false);
+    const el = document.getElementById(id);
+    if (el) {
+      const offset = 120;
+      const elementPosition = el.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const navItems = [
+    { id: 'metrics', label: '数据指标概览', icon: BarChart3 },
+    { id: 'ranking', label: '新年歌风云榜', icon: Trophy },
+    { id: 'calendar', label: '新年歌曲发布日历', icon: Calendar },
+    { id: 'pun-stats', label: '标题：“马”关键词', icon: Zap },
+    { id: 'hashtags', label: '热门标签分析', icon: Hash }
+  ];
 
   if (loading) {
     return (
@@ -146,59 +172,118 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen overflow-x-hidden relative selection:bg-red-100 selection:text-red-900 text-gray-900 pb-12">
       {/* Decorative background elements */}
-      <div className={`fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden transition-opacity duration-700 ${isModalOpen ? 'opacity-0' : 'opacity-50'}`}>
+      <div className={`fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden transition-opacity duration-700 ${isModalOpen || isMenuOpen ? 'opacity-0' : 'opacity-50'}`}>
         <div className="absolute -top-20 -left-20 w-96 h-96 bg-red-600/5 rounded-full blur-[100px]"></div>
         <div className="absolute top-1/2 -right-20 w-80 h-80 bg-amber-500/5 rounded-full blur-[80px]"></div>
       </div>
 
-      <nav className={`w-full pt-8 md:pt-12 relative z-[50] transition-all duration-700 ${isModalOpen ? 'opacity-0 pointer-events-none translate-y-[-20px]' : 'opacity-100'}`}>
-        <div className="w-[92%] mx-auto max-w-[1800px] glass-light rounded-[2.5rem] md:rounded-[4rem] px-6 py-5 md:px-12 md:py-10 flex justify-between items-center shadow-2xl shadow-red-900/5 border-white/80">
-          <div className="flex items-center gap-5 md:gap-8">
-            <div className="relative group shrink-0">
-              <div className="absolute -inset-2 bg-gradient-to-r from-red-600 to-amber-500 rounded-2xl md:rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-              <div className="relative bg-red-600 p-3 md:p-5 rounded-2xl md:rounded-[2rem] shadow-xl">
-                <Music className="text-white w-6 h-6 md:w-10 md:h-10" />
+      {/* Hamburger Menu Overlay */}
+      <div className={`fixed inset-0 z-[100] transition-all duration-700 ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+        <div className="absolute inset-0 bg-red-950/40 backdrop-blur-2xl" onClick={() => setIsMenuOpen(false)}></div>
+        <div className={`absolute top-0 left-0 h-full w-full md:w-[450px] bg-white shadow-2xl transition-transform duration-700 ease-expo ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+          <div className="p-8 md:p-12 h-full flex flex-col">
+            <div className="flex justify-between items-center mb-16">
+              <div className="bg-red-600 p-2.5 rounded-xl">
+                <Music className="text-white w-5 h-5" />
               </div>
+              <button 
+                onClick={() => setIsMenuOpen(false)}
+                className="p-3 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white rounded-full transition-all duration-500 active:scale-90"
+              >
+                <X size={24} />
+              </button>
             </div>
-            <div className="flex flex-col gap-2 md:gap-4">
-              <h1 className="text-2xl md:text-5xl font-black text-red-900 font-cny leading-none tracking-tighter">
-                {t.title}
-              </h1>
-              <div className="flex items-center gap-3 md:gap-4">
-                <span className="h-px w-4 md:w-8 bg-red-600/30"></span>
-                <div className="flex flex-col md:flex-row md:items-center text-red-900/60 text-[10px] md:text-sm font-black uppercase tracking-[0.2em] md:tracking-[0.4em] leading-tight md:leading-none">
-                  <span>{t.subtitle}</span>
-                  <span className="text-red-600 mt-1 md:mt-0 md:ml-3">{lastUpdate}</span>
+            
+            <h3 className="text-[10px] font-black text-red-900/40 uppercase tracking-[0.6em] mb-10 pl-1">新春导览菜单</h3>
+            
+            <nav className="flex flex-col gap-4">
+              {navItems.map((item, idx) => (
+                <button
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  style={{ transitionDelay: `${idx * 50}ms` }}
+                  className={`group flex items-center justify-between p-6 rounded-[2rem] bg-gray-50/50 border border-transparent hover:border-red-100 hover:bg-red-50/30 transition-all duration-500 text-left ${isMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-12 opacity-0'}`}
+                >
+                  <div className="flex items-center gap-5">
+                    <div className="bg-white p-3 rounded-2xl shadow-sm text-red-200 group-hover:text-red-600 transition-colors">
+                      <item.icon size={22} />
+                    </div>
+                    <span className="text-lg md:text-xl font-black text-red-950 tracking-tight">{item.label}</span>
+                  </div>
+                  <Sparkles size={16} className="text-amber-400 opacity-0 group-hover:opacity-100 transition-all transform scale-50 group-hover:scale-100" />
+                </button>
+              ))}
+            </nav>
+            
+            <div className="mt-auto pt-10 border-t border-red-50">
+               <div className="flex items-center gap-3 text-red-900/20">
+                  <Star size={14} fill="currentColor" />
+                  <span className="text-[10px] font-black uppercase tracking-widest leading-none">Gong Xi Fa Cai 2026</span>
+               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav className={`w-full pt-8 md:pt-12 relative z-[50] transition-all duration-700 ${isModalOpen ? 'opacity-0 pointer-events-none translate-y-[-20px]' : 'opacity-100'}`}>
+        <div className="w-[84%] mx-auto max-w-[1700px] glass-light rounded-[2.5rem] md:rounded-[4rem] px-6 py-5 md:px-14 md:py-10 flex justify-between items-center shadow-2xl shadow-red-900/5 border-white/80">
+          <div className="flex items-center gap-4 md:gap-10">
+            {/* Hamburger Button Moved to the LEFT */}
+            <button 
+                onClick={() => setIsMenuOpen(true)}
+                className="group flex items-center justify-center bg-red-50 hover:bg-red-600 text-red-600 hover:text-white p-3.5 md:p-5 rounded-2xl md:rounded-3xl transition-all duration-300 active:scale-95 shadow-sm"
+                aria-label="Open Menu"
+             >
+                <Menu size={20} className="md:w-7 md:h-7" />
+             </button>
+
+            <div className="flex items-center gap-5 md:gap-8">
+              <div className="relative group shrink-0 hidden sm:block">
+                <div className="absolute -inset-2 bg-gradient-to-r from-red-600 to-amber-500 rounded-2xl md:rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+                <div className="relative bg-red-600 p-3 md:p-5 rounded-2xl md:rounded-[2rem] shadow-xl">
+                  <Music className="text-white w-5 h-5 md:w-8 md:h-8" />
+                </div>
+              </div>
+              <div className="flex flex-col gap-1.5 md:gap-3">
+                <h1 className="text-xl md:text-4xl lg:text-5xl font-black text-red-900 font-cny leading-none tracking-tighter">
+                  {t.title}
+                </h1>
+                <div className="flex items-center gap-2 md:gap-4">
+                  <span className="h-px w-3 md:w-6 bg-red-600/30"></span>
+                  <div className="flex flex-col md:flex-row md:items-center text-red-900/60 text-[9px] md:text-xs font-black uppercase tracking-[0.2em] md:tracking-[0.4em] leading-tight md:leading-none">
+                    <span>{t.subtitle}</span>
+                    <span className="text-red-600 mt-1 md:mt-0 md:ml-3">{lastUpdate}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
           
-          <div className="hidden lg:flex items-center gap-4">
-             <div className="text-red-900/20 font-black text-xs md:text-sm uppercase tracking-[0.6em] ml-2">
-                Gong Xi Fa Cai 2026
+          <div className="flex items-center gap-4">
+             <div className="hidden lg:block text-red-900/20 font-black text-[10px] md:text-sm uppercase tracking-[0.6em] whitespace-nowrap">
+                2026 马年贺岁
              </div>
           </div>
         </div>
       </nav>
 
-      <main className="w-full pt-12 md:pt-20 relative z-10 space-y-20 md:space-y-40">
-        <section className="w-[90%] mx-auto max-w-[1800px]">
+      <main className="w-full pt-12 md:pt-24 relative z-10 space-y-24 md:space-y-48">
+        <section id="metrics" className="w-[80%] mx-auto max-w-[1700px]">
           <MetricsSection videos={videos} t={t} />
         </section>
 
         {/* Ranking Section */}
-        <section className="w-[90%] mx-auto max-w-[1800px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
+        <section id="ranking" className="w-[80%] mx-auto max-w-[1700px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
           <RankingSection videos={videos} t={t} onModalToggle={handleModalToggle} />
         </section>
 
         {/* Calendar Section */}
-        <section className="w-[90%] mx-auto max-w-[1800px] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
-          <div className="mb-8 flex flex-col items-center justify-center text-center">
+        <section id="calendar" className="w-[80%] mx-auto max-w-[1700px] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+          <div className="mb-10 flex flex-col items-center justify-center text-center">
             <div className="flex items-center gap-2 md:gap-3 mb-2">
               <Sparkles className="text-amber-500 animate-pulse w-4 h-4 md:w-5 md:h-5" />
               <span className="text-red-900/30 font-black text-[9px] md:text-[10px] uppercase tracking-[0.3em] md:tracking-[0.5em]">Release Calendar</span>
-              <Sparkles className="text-amber-500 animate-pulse w-4 h-4 md:w-5 md:h-5" />
+              <Sparkles className="text-amber-500 animate-pulse w-4 h-4 md:size-5" />
             </div>
             <h2 className="text-2xl md:text-5xl font-black text-red-950 font-cny tracking-tight relative px-4">
               {t.festiveTitle}
@@ -212,21 +297,21 @@ const App: React.FC = () => {
         </section>
 
         {/* Horse Pun Stats Section */}
-        <section className="w-[90%] mx-auto max-w-[1800px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
-           <HorseThemedStats videos={videos} />
+        <section id="pun-stats" className="w-[80%] mx-auto max-w-[1700px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
+           <HorseThemedStats videos={videos} onModalToggle={handleModalToggle} />
         </section>
 
         {/* Hashtag Spotlight Section */}
-        <section className="w-[90%] mx-auto max-w-[1800px] animate-in fade-in slide-in-from-bottom-8 duration-1000 pb-20">
-           <HashtagAnalysis videos={videos} />
+        <section id="hashtags" className="w-[80%] mx-auto max-w-[1700px] animate-in fade-in slide-in-from-bottom-8 duration-1000 pb-20">
+           <HashtagAnalysis videos={videos} onModalToggle={handleModalToggle} />
         </section>
       </main>
 
       {/* Go To Top Button */}
       <button
         onClick={scrollToTop}
-        className={`fixed bottom-6 right-6 md:bottom-10 md:right-10 z-[60] bg-red-600 hover:bg-red-700 text-white p-3 md:p-4 rounded-full shadow-2xl transition-all duration-500 transform border-2 border-white/20 hover:scale-110 active:scale-90 hover:shadow-red-900/40 flex items-center justify-center group ${
-          showGoTop && !isModalOpen ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-50 pointer-events-none'
+        className={`fixed bottom-6 right-6 md:bottom-12 md:right-12 z-[60] bg-red-600 hover:bg-red-700 text-white p-3.5 md:p-5 rounded-full shadow-2xl transition-all duration-500 transform border-2 border-white/20 hover:scale-110 active:scale-90 hover:shadow-red-900/40 flex items-center justify-center group ${
+          showGoTop && !isModalOpen && !isMenuOpen ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-50 pointer-events-none'
         }`}
         aria-label="Go to Top"
       >
@@ -234,8 +319,100 @@ const App: React.FC = () => {
         <div className="absolute -inset-2 bg-red-600/20 rounded-full blur-xl animate-pulse group-hover:bg-amber-500/30"></div>
       </button>
 
-      <footer className="mt-16 md:mt-32 text-center text-red-900/20 text-[9px] md:text-[10px] px-6 uppercase tracking-[0.15em] md:tracking-[0.4em] font-black relative z-10 max-w-full overflow-hidden">
+      {/* 精简双列页脚 - 极致更小的字体与更大的间距 */}
+      <footer className="mt-24 md:mt-48 bg-white border-t border-red-50 relative z-10 overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1 opacity-[0.06] bg-[radial-gradient(circle_at_center,_red_1.5px,_transparent_1.5px)] bg-[length:28px_28px]"></div>
+        
+        <div className="max-w-[1800px] mx-auto px-12 md:px-48 py-24 md:py-36">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-48">
+            
+            {/* 第一列：项目初衷 */}
+            <div className="flex flex-col gap-6 md:pr-12">
+              <div className="flex items-center gap-3">
+                <div className="bg-red-600 p-1.5 rounded-lg shadow-lg shadow-red-100">
+                  <Music className="text-white w-3.5 h-3.5" />
+                </div>
+                <h3 className="text-base md:text-lg font-black text-red-950 font-cny tracking-tighter">
+                  {t.title}
+                </h3>
+              </div>
+              <p className="text-red-900/50 text-[11px] md:text-[13px] leading-relaxed font-medium max-w-lg">
+                记录马来西亚贺岁歌曲的每一个音符。这是一个致力于展示 2026 农历新年音乐艺术与表现的数据看板，通过数字化方式连接创作者、品牌方与广大乐迷，让文化魅力被更精准地看见。
+              </p>
+              <div className="flex flex-col gap-1.5 mt-3">
+                <p className="text-red-900/20 text-[9px] font-black uppercase tracking-[0.4em] font-cny">
+                  © 2026 CNY MUSIC INSIGHTS • 马来西亚新年歌探索计划
+                </p>
+                <div className="flex items-center gap-2 text-red-900/20">
+                  <Heart size={10} fill="currentColor" className="text-red-600/20" />
+                  <span className="text-[9px] font-bold uppercase tracking-[0.2em] leading-none">让本地贺岁文化在数字时代更显生命力</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 第二列：联系与合作 */}
+            <div className="flex flex-col gap-7">
+              <h4 className="text-[10px] font-black text-red-950/30 uppercase tracking-[0.5em] border-l-2 border-red-50 pl-4">
+                数据合作与建议反馈
+              </h4>
+              <p className="text-red-900/50 text-[11px] md:text-[13px] leading-relaxed font-medium">
+                若有数据遗漏、合作意向或技术反馈，欢迎通过电子邮箱与我取得联系。您的建议将助力我们更完善地记录 2026 年的声音印记。
+              </p>
+              <a 
+                href="mailto:itsfangying@gmail.com" 
+                className="group relative flex items-center justify-between px-6 py-6 md:px-8 md:py-7 bg-white border border-red-50 rounded-[1.8rem] md:rounded-[2.2rem] transition-all duration-500 shadow-xl shadow-red-900/5 hover:shadow-red-600/20 active:scale-95 overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-amber-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <div className="relative flex items-center gap-4 md:gap-5">
+                  <div className="bg-red-50 p-3 rounded-xl group-hover:bg-white/20 transition-colors">
+                    <Mail size={18} className="text-red-600 group-hover:text-white transition-colors" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[8px] font-black text-red-900/30 group-hover:text-white/60 uppercase tracking-widest leading-none mb-1">联系开发者</span>
+                    <span className="text-sm md:text-base font-black text-red-950 group-hover:text-white transition-colors tracking-tight">
+                      itsfangying@gmail.com
+                    </span>
+                  </div>
+                </div>
+                <div className="relative p-2 rounded-full border border-red-50 group-hover:border-white/20 transition-colors">
+                   <Send size={14} className="text-red-200 group-hover:text-white group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
+                </div>
+              </a>
+            </div>
+
+          </div>
+
+          {/* 底部祝福语跑马灯 */}
+          <div className="mt-20 pt-14 border-t border-red-50 overflow-hidden relative">
+            <div className="flex justify-center mb-10">
+               <div className="w-12 h-1 bg-gradient-to-r from-transparent via-red-100 to-transparent rounded-full opacity-40"></div>
+            </div>
+            
+            <div className="flex items-center justify-center gap-16 whitespace-nowrap animate-marquee">
+              <span className="text-red-900/5 text-[9px] md:text-[10px] font-black uppercase tracking-[1.4em]">恭喜发财 • 万事如意 • 2026 丙午马年 • 骏马奔腾 • 岁岁平安 • 新年进步 • 马到功成 • 大吉大利</span>
+              <span className="text-red-900/5 text-[9px] md:text-[10px] font-black uppercase tracking-[1.4em]">恭喜发财 • 万事如意 • 2026 丙午马年 • 骏马奔腾 • 岁岁平安 • 新年进步 • 马到功成 • 大吉大利</span>
+            </div>
+          </div>
+        </div>
       </footer>
+      
+      <style>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          display: inline-flex;
+          animation: marquee 50s linear infinite;
+        }
+        .ease-expo {
+          transition-timing-function: cubic-bezier(0.85, 0, 0.15, 1);
+        }
+        footer {
+          user-select: none;
+        }
+      `}</style>
     </div>
   );
 };
