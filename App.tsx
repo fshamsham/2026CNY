@@ -226,7 +226,7 @@ const App: React.FC = () => {
       </div>
 
       <nav className={`w-full pt-8 md:pt-12 relative z-[50] transition-all duration-700 ${isModalOpen ? 'opacity-0 pointer-events-none translate-y-[-20px]' : 'opacity-100'}`}>
-        <div className="w-[84%] mx-auto max-w-[1700px] glass-light rounded-[2.5rem] md:rounded-[4rem] px-6 py-5 md:px-14 md:py-10 flex justify-between items-center shadow-2xl shadow-red-900/5 border-white/80">
+        <div className="w-[90%] md:w-[84%] mx-auto max-w-[1700px] glass-light rounded-[2.5rem] md:rounded-[4rem] px-6 py-5 md:px-14 md:py-10 flex justify-between items-center shadow-2xl shadow-red-900/5 border-white/80">
           <div className="flex items-center gap-4 md:gap-10">
             {/* Hamburger Button Moved to the LEFT */}
             <button 
@@ -268,17 +268,17 @@ const App: React.FC = () => {
       </nav>
 
       <main className="w-full pt-12 md:pt-24 relative z-10 space-y-24 md:space-y-48">
-        <section id="metrics" className="w-[80%] mx-auto max-w-[1700px]">
+        <section id="metrics" className="w-[90%] md:w-[80%] mx-auto max-w-[1700px]">
           <MetricsSection videos={videos} t={t} />
         </section>
 
         {/* Ranking Section */}
-        <section id="ranking" className="w-[80%] mx-auto max-w-[1700px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
+        <section id="ranking" className="w-[90%] md:w-[80%] mx-auto max-w-[1700px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
           <RankingSection videos={videos} t={t} onModalToggle={handleModalToggle} />
         </section>
 
         {/* Calendar Section */}
-        <section id="calendar" className="w-[80%] mx-auto max-w-[1700px] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+        <section id="calendar" className="w-[90%] md:w-[80%] mx-auto max-w-[1700px] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
           <div className="mb-10 flex flex-col items-center justify-center text-center">
             <div className="flex items-center gap-2 md:gap-3 mb-2">
               <Sparkles className="text-amber-500 animate-pulse w-4 h-4 md:w-5 md:h-5" />
@@ -297,12 +297,12 @@ const App: React.FC = () => {
         </section>
 
         {/* Horse Pun Stats Section */}
-        <section id="pun-stats" className="w-[80%] mx-auto max-w-[1700px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
+        <section id="pun-stats" className="w-[90%] md:w-[80%] mx-auto max-w-[1700px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
            <HorseThemedStats videos={videos} onModalToggle={handleModalToggle} />
         </section>
 
         {/* Hashtag Spotlight Section */}
-        <section id="hashtags" className="w-[80%] mx-auto max-w-[1700px] animate-in fade-in slide-in-from-bottom-8 duration-1000 pb-20">
+        <section id="hashtags" className="w-[90%] md:w-[80%] mx-auto max-w-[1700px] animate-in fade-in slide-in-from-bottom-8 duration-1000 pb-20">
            <HashtagAnalysis videos={videos} onModalToggle={handleModalToggle} />
         </section>
       </main>
@@ -323,7 +323,7 @@ const App: React.FC = () => {
       <footer className="mt-24 md:mt-48 bg-white border-t border-red-50 relative z-10 overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 opacity-[0.06] bg-[radial-gradient(circle_at_center,_red_1.5px,_transparent_1.5px)] bg-[length:28px_28px]"></div>
         
-        <div className="max-w-[1800px] mx-auto px-12 md:px-48 py-24 md:py-36">
+        <div className="max-w-[1800px] mx-auto px-6 md:px-48 py-20 md:py-36">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-48">
             
             {/* 第一列：项目初衷 */}

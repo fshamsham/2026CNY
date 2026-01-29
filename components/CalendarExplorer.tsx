@@ -306,7 +306,7 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
                       </div>
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col justify-center overflow-hidden">
-                      <h5 className="font-black text-gray-900 text-sm md:text-lg leading-tight mb-2 group-hover:text-red-600 transition-colors break-words">
+                      <h5 className="font-black text-gray-900 text-sm md:text-lg leading-tight mb-2 group-hover:text-red-600 transition-colors break-words line-clamp-3">
                         {v.VideoTitle}
                       </h5>
                       <div className="flex items-center gap-1.5 md:gap-2">
