@@ -52,6 +52,7 @@ export const MetricsSection: React.FC<Props> = ({ videos, t }) => {
       '2025-11': 0,
       '2025-12': 0,
       '2026-01': 0,
+      '2026-02': 0,
     };
     videos.forEach(v => {
       const d = new Date(v.PublishDate);
@@ -95,6 +96,10 @@ export const MetricsSection: React.FC<Props> = ({ videos, t }) => {
                 <div className="flex justify-between items-center gap-6">
                   <span className="text-amber-400">2026-01:</span>
                   <span className="font-black">{monthlyCounts['2026-01']} 首</span>
+                </div>
+                <div className="flex justify-between items-center gap-6">
+                  <span className="text-amber-400">2026-02:</span>
+                  <span className="font-black">{monthlyCounts['2026-02']} 首</span>
                 </div>
                 <div className="h-px bg-white/20 my-1"></div>
                 <div className="flex justify-between items-center gap-6 opacity-60">
