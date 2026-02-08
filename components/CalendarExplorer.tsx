@@ -9,6 +9,71 @@ interface Props {
   onModalToggle?: (isOpen: boolean) => void;
 }
 
+const MiniHeatmap: React.FC<{ currentDate: Date; monthVideos: VideoData[] }> = ({ currentDate, monthVideos }) => {
+  const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+  const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
+  const startOffset = (firstDayOfMonth + 6) % 7;
+  
+  const dayStats = useMemo(() => {
+    const stats = new Array(daysInMonth).fill(0);
+    monthVideos.forEach(v => {
+      const d = new Date(v.PublishDate).getDate();
+      if (d >= 1 && d <= daysInMonth) stats[d - 1]++;
+    });
+    return stats;
+  }, [monthVideos, daysInMonth]);
+
+  const today = new Date();
+  const isCurrentMonth = today.getFullYear() === currentDate.getFullYear() && today.getMonth() === currentDate.getMonth();
+
+  const dayHeaders = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+  return (
+    <div className="flex flex-col items-center gap-2.5 mb-2 animate-in fade-in slide-in-from-bottom-2 duration-700">
+      <div className="p-3 md:p-4 bg-white/60 backdrop-blur-sm rounded-[1.5rem] border border-red-50 shadow-inner">
+        {/* Day Headers */}
+        <div className="grid grid-cols-7 gap-1.5 md:gap-2.5 mb-2 border-b border-red-100/50 pb-1.5">
+          {dayHeaders.map((day, i) => (
+            <div key={i} className="w-3 md:w-4 flex items-center justify-center">
+              <span className="text-[7px] md:text-[8px] font-black text-red-900/30">{day}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-7 gap-1.5 md:gap-2.5">
+          {/* Padding for start of month */}
+          {Array.from({ length: startOffset }).map((_, i) => (
+            <div key={`pad-${i}`} className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-transparent" />
+          ))}
+          {/* Real Days */}
+          {dayStats.map((count, i) => {
+            const dayNum = i + 1;
+            const isToday = isCurrentMonth && today.getDate() === dayNum;
+            
+            let bgColor = 'bg-gray-100';
+            if (count > 0) bgColor = 'bg-red-200';
+            if (count > 2) bgColor = 'bg-red-400';
+            if (count > 5) bgColor = 'bg-red-600';
+
+            return (
+              <div 
+                key={i} 
+                className={`w-3 h-3 md:w-4 md:h-4 rounded-full transition-all duration-500 relative ${bgColor} ${count > 0 ? 'shadow-[0_0_8px_rgba(220,38,38,0.15)]' : ''}`}
+                title={`${dayNum}日: ${count}首`}
+              >
+                {isToday && (
+                  <div className="absolute inset-0 rounded-full border border-red-950 scale-150 opacity-40 animate-ping" />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <span className="text-[8px] font-black text-red-900/30 uppercase tracking-[0.2em]">Release Activity Map</span>
+    </div>
+  );
+};
+
 const DayHoverCard: React.FC<{ videos: VideoData[] }> = ({ videos }) => {
   return (
     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-64 md:w-80 bg-white rounded-3xl shadow-[0_20px_50px_rgba(220,38,38,0.15)] border border-red-50 overflow-hidden z-[60] animate-in fade-in zoom-in-95 slide-in-from-bottom-2 duration-300 pointer-events-none">
@@ -434,24 +499,31 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
           )}
         </div>
         
-        {/* Only show pagination if NOT searching */}
+        {/* Only show pagination and heatmap if NOT searching */}
         {!isSearching && (
-          <div className="flex items-center bg-red-50 p-1 md:p-1.5 rounded-[1.2rem] md:rounded-[1.8rem] border border-red-100 shadow-sm animate-in fade-in duration-500">
-            <button 
-              onClick={handlePrevMonth}
-              disabled={currentMonthIdx <= 0}
-              className={`p-3 md:p-3 rounded-lg md:rounded-[1.2rem] transition-all ${currentMonthIdx <= 0 ? 'text-gray-300 cursor-not-allowed' : 'text-red-600 hover:bg-white hover:shadow-md active:scale-95'}`}
-            >
-              <ChevronLeft size={24} className="md:w-6 md:h-6" />
-            </button>
-            <div className="w-px h-6 md:h-8 bg-red-200 mx-2 md:mx-3"></div>
-            <button 
-              onClick={handleNextMonth}
-              disabled={currentMonthIdx >= availableMonths.length - 1}
-              className={`p-3 md:p-3 rounded-lg md:rounded-[1.2rem] transition-all ${currentMonthIdx >= availableMonths.length - 1 ? 'text-gray-300 cursor-not-allowed' : 'text-red-600 hover:bg-white hover:shadow-md active:scale-95'}`}
-            >
-              <ChevronRight size={24} className="md:w-6 md:h-6" />
-            </button>
+          <div className="flex flex-col items-center">
+            {/* Heatmap visible primarily in List View (Mobile) */}
+            {(viewMode === 'list' || isMobileView) && (
+              <MiniHeatmap currentDate={currentDate} monthVideos={monthVideos} />
+            )}
+            
+            <div className="flex items-center bg-red-50 p-1 md:p-1.5 rounded-[1.2rem] md:rounded-[1.8rem] border border-red-100 shadow-sm animate-in fade-in duration-500">
+              <button 
+                onClick={handlePrevMonth}
+                disabled={currentMonthIdx <= 0}
+                className={`p-3 md:p-3 rounded-lg md:rounded-[1.2rem] transition-all ${currentMonthIdx <= 0 ? 'text-gray-300 cursor-not-allowed' : 'text-red-600 hover:bg-white hover:shadow-md active:scale-95'}`}
+              >
+                <ChevronLeft size={24} className="md:w-6 md:h-6" />
+              </button>
+              <div className="w-px h-6 md:h-8 bg-red-200 mx-2 md:mx-3"></div>
+              <button 
+                onClick={handleNextMonth}
+                disabled={currentMonthIdx >= availableMonths.length - 1}
+                className={`p-3 md:p-3 rounded-lg md:rounded-[1.2rem] transition-all ${currentMonthIdx >= availableMonths.length - 1 ? 'text-gray-300 cursor-not-allowed' : 'text-red-600 hover:bg-white hover:shadow-md active:scale-95'}`}
+              >
+                <ChevronRight size={24} className="md:w-6 md:h-6" />
+              </button>
+            </div>
           </div>
         )}
       </div>
