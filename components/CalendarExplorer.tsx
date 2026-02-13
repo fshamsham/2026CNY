@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { VideoData, Translations } from '../types';
-import { ChevronLeft, ChevronRight, Play, Info, Calendar as CalendarIcon, List as ListIcon, Search, X, Sparkles, Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Info, Calendar as CalendarIcon, List as ListIcon, Search, X, Sparkles, Plus, ChevronDown, ChevronUp, Eye, Heart, Calendar, ArrowDownWideNarrow } from 'lucide-react';
 import { VideoModal } from './VideoModal';
 
 interface Props {
@@ -9,7 +9,15 @@ interface Props {
   onModalToggle?: (isOpen: boolean) => void;
 }
 
-const MiniHeatmap: React.FC<{ currentDate: Date; monthVideos: VideoData[] }> = ({ currentDate, monthVideos }) => {
+const MiniHeatmap: React.FC<{ 
+  currentDate: Date; 
+  monthVideos: VideoData[]; 
+  onPrev: () => void; 
+  onNext: () => void;
+  canPrev: boolean;
+  canNext: boolean;
+  t: Translations;
+}> = ({ currentDate, monthVideos, onPrev, onNext, canPrev, canNext, t }) => {
   const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
   const startOffset = (firstDayOfMonth + 6) % 7;
@@ -25,51 +33,110 @@ const MiniHeatmap: React.FC<{ currentDate: Date; monthVideos: VideoData[] }> = (
 
   const today = new Date();
   const isCurrentMonth = today.getFullYear() === currentDate.getFullYear() && today.getMonth() === currentDate.getMonth();
-
-  const dayHeaders = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  const dayHeaders = ['一', '二', '三', '四', '五', '六', '日'];
+  const monthNumber = (currentDate.getMonth() + 1).toString().padStart(2, '0');
 
   return (
-    <div className="flex flex-col items-center gap-2.5 mb-2 animate-in fade-in slide-in-from-bottom-2 duration-700">
-      <div className="p-3 md:p-4 bg-white/60 backdrop-blur-sm rounded-[1.5rem] border border-red-50 shadow-inner">
+    <div className="flex flex-col items-center w-full max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-1000 mb-12 md:mb-16">
+      <div className="relative w-full p-2 md:p-6 group/heatmap overflow-hidden bg-transparent">
+        
+        {/* Integrated Navigation & Header */}
+        <div className="flex items-end justify-between mb-10 px-1 relative z-10">
+          <div className="flex flex-col gap-3 md:gap-3">
+             <div className="flex items-center gap-3">
+                <h3 className="text-3xl md:text-6xl font-black text-red-950 font-cny tracking-tighter leading-none flex items-center gap-3">
+                  <span>{monthNumber}</span> 
+                  <span className="text-red-600/20 font-light">/</span> 
+                  <span>{currentDate.getFullYear()}</span>
+                </h3>
+             </div>
+             <div className="flex items-center gap-2">
+                <div className="w-4 md:w-8 h-px bg-red-600/30"></div>
+                <p className="text-red-900/60 font-black text-[10px] md:text-xl uppercase tracking-[0.1em] md:tracking-[0.2em] leading-none">
+                  <span className="text-red-600">{monthVideos.length}</span> {t.videos}
+                </p>
+             </div>
+          </div>
+
+          <div className="flex items-center bg-red-50/50 p-1 md:p-1.5 rounded-[1.2rem] md:rounded-[1.8rem] border border-red-100/50 shadow-sm transition-transform hover:scale-105">
+            <button 
+              onClick={onPrev}
+              disabled={!canPrev}
+              className={`p-2.5 md:p-3 rounded-lg md:rounded-[1.2rem] transition-all ${!canPrev ? 'text-gray-300 cursor-not-allowed' : 'text-red-600 hover:bg-white hover:shadow-md active:scale-95'}`}
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <div className="w-px h-6 md:h-8 bg-red-200/50 mx-1.5 md:mx-2"></div>
+            <button 
+              onClick={onNext}
+              disabled={!canNext}
+              className={`p-2.5 md:p-3 rounded-lg md:rounded-[1.2rem] transition-all ${!canNext ? 'text-gray-300 cursor-not-allowed' : 'text-red-600 hover:bg-white hover:shadow-md active:scale-95'}`}
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
+        </div>
+
         {/* Day Headers */}
-        <div className="grid grid-cols-7 gap-1.5 md:gap-2.5 mb-2 border-b border-red-100/50 pb-1.5">
+        <div className="grid grid-cols-7 gap-2 md:gap-4 mb-4 border-b border-red-50/30 pb-6">
           {dayHeaders.map((day, i) => (
-            <div key={i} className="w-3 md:w-4 flex items-center justify-center">
-              <span className="text-[7px] md:text-[8px] font-black text-red-900/30">{day}</span>
+            <div key={i} className="flex items-center justify-center">
+              <span className="text-[10px] md:text-xs font-black text-red-900/30 tracking-tighter uppercase">{day}</span>
             </div>
           ))}
         </div>
 
-        <div className="grid grid-cols-7 gap-1.5 md:gap-2.5">
-          {/* Padding for start of month */}
+        {/* The Grid */}
+        <div className="grid grid-cols-7 gap-2 md:gap-5">
           {Array.from({ length: startOffset }).map((_, i) => (
-            <div key={`pad-${i}`} className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-transparent" />
+            <div key={`pad-${i}`} className="aspect-square w-full rounded-lg md:rounded-2xl bg-transparent" />
           ))}
-          {/* Real Days */}
+          
           {dayStats.map((count, i) => {
             const dayNum = i + 1;
             const isToday = isCurrentMonth && today.getDate() === dayNum;
             
-            let bgColor = 'bg-gray-100';
-            if (count > 0) bgColor = 'bg-red-200';
-            if (count > 2) bgColor = 'bg-red-400';
-            if (count > 5) bgColor = 'bg-red-600';
+            let bgColor = 'bg-transparent';
+            let borderColor = 'border-gray-100/50';
+            let intensityClass = '';
+            
+            if (count > 0) {
+              bgColor = 'bg-red-50';
+              borderColor = 'border-red-100';
+            }
+            if (count > 2) {
+              bgColor = 'bg-red-200';
+              borderColor = 'border-red-300/30';
+              intensityClass = 'shadow-[0_0_15px_rgba(220,38,38,0.08)]';
+            }
+            if (count > 5) {
+              bgColor = 'bg-gradient-to-br from-red-600 to-red-700';
+              borderColor = 'border-red-700/30';
+              intensityClass = 'shadow-[0_15px_30px_-5px_rgba(220,38,38,0.4)]';
+            }
 
             return (
               <div 
                 key={i} 
-                className={`w-3 h-3 md:w-4 md:h-4 rounded-full transition-all duration-500 relative ${bgColor} ${count > 0 ? 'shadow-[0_0_8px_rgba(220,38,38,0.15)]' : ''}`}
-                title={`${dayNum}日: ${count}首`}
+                className={`aspect-square w-full rounded-lg md:rounded-2xl transition-all duration-500 relative border flex items-center justify-center ${bgColor} ${borderColor} ${intensityClass} hover:scale-110 hover:z-10 cursor-help group/cell`}
               >
                 {isToday && (
-                  <div className="absolute inset-0 rounded-full border border-red-950 scale-150 opacity-40 animate-ping" />
+                  <div className="absolute -inset-1.5 rounded-[12px] md:rounded-[22px] border-2 border-amber-500/40 animate-pulse" />
                 )}
+                
+                {count > 5 && (
+                  <div className="absolute inset-0 bg-white/20 animate-pulse rounded-2xl"></div>
+                )}
+
+                <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-red-950 text-white text-[10px] font-black px-3 py-1.5 rounded-xl opacity-0 group-hover/cell:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0 pointer-events-none whitespace-nowrap z-20 shadow-2xl border border-white/10">
+                  {dayNum}日: {count} 首
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-red-950"></div>
+                </div>
               </div>
             );
           })}
         </div>
       </div>
-      <span className="text-[8px] font-black text-red-900/30 uppercase tracking-[0.2em]">Release Activity Map</span>
     </div>
   );
 };
@@ -129,7 +196,6 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
     }
   }, [selectedDayVideos, onModalToggle]);
 
-  // Available months calculation
   const availableMonths = useMemo(() => {
     const monthMap = new Map<string, Date>();
     videos.forEach(v => {
@@ -156,17 +222,14 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
 
   const [currentDate, setCurrentDate] = useState<Date>(initialMonth);
 
-  // Reset pagination when date or search changes
   useEffect(() => {
     setVisibleGroupsCount(3);
   }, [currentDate, searchQuery]);
 
-  // Sync date if initial month changes
   useEffect(() => {
     setCurrentDate(initialMonth);
   }, [initialMonth]);
 
-  // Global search results
   const searchResults = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return [];
@@ -419,7 +482,7 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
     <div className="bg-white rounded-[2rem] md:rounded-[3.5rem] p-5 md:p-14 shadow-2xl shadow-red-900/5 border border-gray-100 relative overflow-visible">
       
       {/* Search Bar Container */}
-      <div className="mb-10 md:mb-14 animate-in fade-in slide-in-from-top-4 duration-500">
+      <div className="mb-8 md:mb-14 animate-in fade-in slide-in-from-top-4 duration-500">
         <div className="relative group max-w-4xl mx-auto">
           <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
             <Search size={22} className="text-red-300 group-focus-within:text-red-600 transition-colors" />
@@ -445,7 +508,8 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row justify-between items-center mb-8 md:mb-14 gap-6 md:gap-8 relative z-10">
+      {/* Header Container */}
+      <div className={`flex flex-col md:flex-row justify-between items-center ${isSearching ? 'mb-8' : 'mb-4'} md:mb-14 gap-6 md:gap-8 relative z-10`}>
         <div className="text-center md:text-left flex-1">
           {isSearching ? (
             <div className="animate-in fade-in slide-in-from-left-4 duration-500">
@@ -463,70 +527,77 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
             </div>
           ) : (
             <div className="animate-in fade-in duration-500">
-              <h2 className="text-3xl md:text-6xl font-black text-red-950 font-cny tracking-tighter flex flex-row items-center justify-center md:justify-start gap-3 md:gap-6">
-                <span>{monthNumber}</span> 
-                <span className="text-red-600/20 font-light">/</span> 
-                <span>{currentDate.getFullYear()}</span>
-              </h2>
-              <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-2 md:gap-4 mt-4 md:mt-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 md:w-8 h-px bg-red-600/30"></div>
-                  <p className="text-red-900/60 font-black text-base md:text-xl uppercase tracking-[0.1em] md:tracking-[0.2em]">
-                    <span className="text-red-600">{monthVideos.length}</span> {t.videos}
-                  </p>
-                </div>
-                
-                {!isMobileView && (
-                  <div className="flex bg-gray-100/80 p-1 rounded-xl md:rounded-2xl border border-gray-200">
-                    <button 
-                      onClick={() => setViewMode('calendar')}
-                      className={`p-2 md:p-2 rounded-lg md:rounded-xl transition-all ${viewMode === 'calendar' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-400 hover:text-red-900'}`}
-                      title="Calendar View"
-                    >
-                      <CalendarIcon size={18} className="md:size-5" />
-                    </button>
-                    <button 
-                      onClick={() => setViewMode('list')}
-                      className={`p-2 md:p-2 rounded-lg md:rounded-xl transition-all ${viewMode === 'list' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-400 hover:text-red-900'}`}
-                      title="List View"
-                    >
-                      <ListIcon size={18} className="md:size-5" />
-                    </button>
+              {!isMobileView && (
+                <div className="flex flex-col md:flex-row justify-between items-center w-full gap-8">
+                  <div className="flex flex-col gap-3">
+                    <h2 className="text-3xl md:text-6xl font-black text-red-950 font-cny tracking-tighter flex flex-row items-center justify-center md:justify-start gap-3 md:gap-6">
+                      <span>{monthNumber}</span> 
+                      <span className="text-red-600/20 font-light">/</span> 
+                      <span>{currentDate.getFullYear()}</span>
+                    </h2>
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 md:w-8 h-px bg-red-600/30"></div>
+                      <p className="text-red-900/60 font-black text-base md:text-xl uppercase tracking-[0.1em] md:tracking-[0.2em]">
+                        <span className="text-red-600">{monthVideos.length}</span> {t.videos}
+                      </p>
+                    </div>
                   </div>
-                )}
-              </div>
+
+                  <div className="flex items-center gap-6">
+                    <div className="flex bg-gray-100/80 p-1 rounded-xl md:rounded-2xl border border-gray-200">
+                      <button 
+                        onClick={() => setViewMode('calendar')}
+                        className={`p-2 md:p-2 rounded-lg md:rounded-xl transition-all ${viewMode === 'calendar' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-400 hover:text-red-900'}`}
+                        title="Calendar View"
+                      >
+                        <CalendarIcon size={18} className="md:size-5" />
+                      </button>
+                      <button 
+                        onClick={() => setViewMode('list')}
+                        className={`p-2 md:p-2 rounded-lg md:rounded-xl transition-all ${viewMode === 'list' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-400 hover:text-red-900'}`}
+                        title="List View"
+                      >
+                        <ListIcon size={18} className="md:size-5" />
+                      </button>
+                    </div>
+
+                    <div className="flex items-center bg-red-50 p-1 rounded-[1.2rem] border border-red-100 shadow-sm">
+                      <button 
+                        onClick={handlePrevMonth}
+                        disabled={currentMonthIdx <= 0}
+                        className={`p-3 rounded-lg transition-all ${currentMonthIdx <= 0 ? 'text-gray-300 cursor-not-allowed' : 'text-red-600 hover:bg-white hover:shadow-md active:scale-95'}`}
+                      >
+                        <ChevronLeft size={24} />
+                      </button>
+                      <div className="w-px h-6 bg-red-200 mx-2"></div>
+                      <button 
+                        onClick={handleNextMonth}
+                        disabled={currentMonthIdx >= availableMonths.length - 1}
+                        className={`p-3 rounded-lg transition-all ${currentMonthIdx >= availableMonths.length - 1 ? 'text-gray-300 cursor-not-allowed' : 'text-red-600 hover:bg-white hover:shadow-md active:scale-95'}`}
+                      >
+                        <ChevronRight size={24} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
-        
-        {/* Only show pagination and heatmap if NOT searching */}
-        {!isSearching && (
-          <div className="flex flex-col items-center">
-            {/* Heatmap visible primarily in List View (Mobile) */}
-            {(viewMode === 'list' || isMobileView) && (
-              <MiniHeatmap currentDate={currentDate} monthVideos={monthVideos} />
-            )}
-            
-            <div className="flex items-center bg-red-50 p-1 md:p-1.5 rounded-[1.2rem] md:rounded-[1.8rem] border border-red-100 shadow-sm animate-in fade-in duration-500">
-              <button 
-                onClick={handlePrevMonth}
-                disabled={currentMonthIdx <= 0}
-                className={`p-3 md:p-3 rounded-lg md:rounded-[1.2rem] transition-all ${currentMonthIdx <= 0 ? 'text-gray-300 cursor-not-allowed' : 'text-red-600 hover:bg-white hover:shadow-md active:scale-95'}`}
-              >
-                <ChevronLeft size={24} className="md:w-6 md:h-6" />
-              </button>
-              <div className="w-px h-6 md:h-8 bg-red-200 mx-2 md:mx-3"></div>
-              <button 
-                onClick={handleNextMonth}
-                disabled={currentMonthIdx >= availableMonths.length - 1}
-                className={`p-3 md:p-3 rounded-lg md:rounded-[1.2rem] transition-all ${currentMonthIdx >= availableMonths.length - 1 ? 'text-gray-300 cursor-not-allowed' : 'text-red-600 hover:bg-white hover:shadow-md active:scale-95'}`}
-              >
-                <ChevronRight size={24} className="md:w-6 md:h-6" />
-              </button>
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* HEATMAP - ONLY SHOW IN MOBILE VERSION AS REQUESTED */}
+      {!isSearching && isMobileView && (
+        <MiniHeatmap 
+          currentDate={currentDate} 
+          monthVideos={monthVideos}
+          onPrev={handlePrevMonth}
+          onNext={handleNextMonth}
+          canPrev={currentMonthIdx > 0}
+          canNext={currentMonthIdx < availableMonths.length - 1}
+          t={t}
+        />
+      )}
 
       {viewMode === 'list' ? (
         renderList()

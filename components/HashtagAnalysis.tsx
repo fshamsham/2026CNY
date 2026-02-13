@@ -1,4 +1,6 @@
+
 import React, { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { VideoData, Translations } from '../types';
 import { Hash, Sparkles, PlayCircle, X, Play, MessageSquareQuote, ChevronDown, ChevronUp } from 'lucide-react';
 import { VideoModal } from './VideoModal';
@@ -136,9 +138,9 @@ export const HashtagAnalysis: React.FC<Props> = ({ videos, onModalToggle }) => {
         )}
       </div>
 
-      {selectedTag && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-2 sm:p-4 bg-red-950/40 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="bg-white rounded-[2rem] md:rounded-[4rem] w-full max-w-4xl max-h-[92vh] md:max-h-[85vh] overflow-hidden flex flex-col shadow-[0_40px_100px_-20px_rgba(0,0,0,0.4)] border border-red-50 animate-in zoom-in-95 duration-300">
+      {selectedTag && createPortal(
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-2 sm:p-4 bg-red-950/25 backdrop-blur-xl animate-in fade-in duration-500">
+          <div className="bg-[#fffbf2] border border-red-100 rounded-[2rem] md:rounded-[4rem] w-full max-w-7xl max-h-[96vh] overflow-hidden flex flex-col shadow-[0_40px_100px_-20px_rgba(220,38,38,0.25)] animate-in zoom-in-95 duration-500">
             <div className="px-5 py-4 md:px-12 md:py-10 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 sticky top-0 z-10">
               <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
                 <div className="bg-red-600 p-2 md:p-3 rounded-xl md:rounded-2xl shadow-xl shadow-red-100 shrink-0">
@@ -162,7 +164,7 @@ export const HashtagAnalysis: React.FC<Props> = ({ videos, onModalToggle }) => {
               </button>
             </div>
             
-            <div className="flex-1 overflow-y-auto p-4 md:p-12 space-y-4 md:space-y-10 custom-scrollbar overscroll-contain bg-paper/10">
+            <div className="flex-1 overflow-y-auto p-4 md:p-12 space-y-4 md:space-y-10 custom-scrollbar overscroll-contain bg-paper/30">
               {selectedTag.videos.map((v, i) => (
                 <div 
                   key={v.VideoURL + i} 
@@ -198,7 +200,8 @@ export const HashtagAnalysis: React.FC<Props> = ({ videos, onModalToggle }) => {
               ))}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {detailedVideo && (

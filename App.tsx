@@ -7,10 +7,12 @@ import { RankingSection } from './components/RankingSection';
 import { CalendarExplorer } from './components/CalendarExplorer';
 import { HorseThemedStats } from './components/HorseThemedStats';
 import { HashtagAnalysis } from './components/HashtagAnalysis';
+import { ReleasePeakStats } from './components/ReleasePeakStats';
+import { VideoModal } from './components/VideoModal';
 import { 
   Music, Sparkles, Star, AlertCircle, RefreshCw, 
   ChevronUp, Mail, Heart, Compass, Send, 
-  Menu, X, Trophy, BarChart3, Calendar, Zap, Hash
+  Menu, X, Trophy, BarChart3, Calendar, Zap, Hash, Flame
 } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -22,10 +24,11 @@ const App: React.FC = () => {
   const [showGoTop, setShowGoTop] = useState(false);
   const [modalOpenCount, setModalOpenCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [selectedDayVideos, setSelectedDayVideos] = useState<{ date: string, videos: VideoData[] } | null>(null);
 
   const t = TRANSLATIONS;
 
-  const isModalOpen = modalOpenCount > 0;
+  const isModalOpen = modalOpenCount > 0 || !!selectedDayVideos;
 
   const handleModalToggle = useCallback((isOpen: boolean) => {
     setModalOpenCount(prev => isOpen ? prev + 1 : Math.max(0, prev - 1));
@@ -129,8 +132,9 @@ const App: React.FC = () => {
   const navItems = [
     { id: 'metrics', label: '数据指标概览', icon: BarChart3 },
     { id: 'ranking', label: '新年歌风云榜', icon: Trophy },
+    { id: 'peaks', label: '单日发布巅峰', icon: Flame },
     { id: 'calendar', label: '新年歌曲发布日历', icon: Calendar },
-    { id: 'pun-stats', label: '标题：“马”关键词', icon: Zap },
+    { id: 'pun-stats', label: '标题用“马”关键词/谐音', icon: Zap },
     { id: 'hashtags', label: '热门标签分析', icon: Hash }
   ];
 
@@ -228,7 +232,7 @@ const App: React.FC = () => {
       <nav className={`w-full pt-8 md:pt-12 relative z-[50] transition-all duration-700 ${isModalOpen ? 'opacity-0 pointer-events-none translate-y-[-20px]' : 'opacity-100'}`}>
         <div className="w-[90%] md:w-[84%] mx-auto max-w-[1700px] glass-light rounded-[2.5rem] md:rounded-[4rem] px-6 py-5 md:px-14 md:py-10 flex justify-between items-center shadow-2xl shadow-red-900/5 border-white/80">
           <div className="flex items-center gap-4 md:gap-10">
-            {/* Hamburger Button Moved to the LEFT */}
+            {/* Hamburger Button */}
             <button 
                 onClick={() => setIsMenuOpen(true)}
                 className="group flex items-center justify-center bg-red-50 hover:bg-red-600 text-red-600 hover:text-white p-3.5 md:p-5 rounded-2xl md:rounded-3xl transition-all duration-300 active:scale-95 shadow-sm"
@@ -277,6 +281,15 @@ const App: React.FC = () => {
           <RankingSection videos={videos} t={t} onModalToggle={handleModalToggle} />
         </section>
 
+        {/* Release Peak Stats Section */}
+        <section id="peaks" className="w-[90%] md:w-[80%] mx-auto max-w-[1700px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          <ReleasePeakStats 
+            videos={videos} 
+            t={t} 
+            onDateClick={(date, vids) => setSelectedDayVideos({ date, videos: vids })} 
+          />
+        </section>
+
         {/* Calendar Section */}
         <section id="calendar" className="w-[90%] md:w-[80%] mx-auto max-w-[1700px] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
           <div className="mb-10 flex flex-col items-center justify-center text-center">
@@ -319,14 +332,12 @@ const App: React.FC = () => {
         <div className="absolute -inset-2 bg-red-600/20 rounded-full blur-xl animate-pulse group-hover:bg-amber-500/30"></div>
       </button>
 
-      {/* 精简双列页脚 - 极致更小的字体与更大的间距 */}
+      {/* Footer */}
       <footer className="mt-24 md:mt-48 bg-white border-t border-red-50 relative z-10 overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 opacity-[0.06] bg-[radial-gradient(circle_at_center,_red_1.5px,_transparent_1.5px)] bg-[length:28px_28px]"></div>
         
         <div className="max-w-[1800px] mx-auto px-6 md:px-48 py-20 md:py-36">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-48">
-            
-            {/* 第一列：项目初衷 */}
             <div className="flex flex-col gap-6 md:pr-12">
               <div className="flex items-center gap-3">
                 <div className="bg-red-600 p-1.5 rounded-lg shadow-lg shadow-red-100">
@@ -350,7 +361,6 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* 第二列：联系与合作 */}
             <div className="flex flex-col gap-7">
               <h4 className="text-[10px] font-black text-red-950/30 uppercase tracking-[0.5em] border-l-2 border-red-50 pl-4">
                 数据合作与建议反馈
@@ -380,10 +390,8 @@ const App: React.FC = () => {
                 </div>
               </a>
             </div>
-
           </div>
 
-          {/* 底部祝福语跑马灯 */}
           <div className="mt-20 pt-14 border-t border-red-50 overflow-hidden relative">
             <div className="flex justify-center mb-10">
                <div className="w-12 h-1 bg-gradient-to-r from-transparent via-red-100 to-transparent rounded-full opacity-40"></div>
@@ -396,6 +404,16 @@ const App: React.FC = () => {
           </div>
         </div>
       </footer>
+
+      {selectedDayVideos && (
+        <VideoModal 
+          isOpen={!!selectedDayVideos}
+          onClose={() => setSelectedDayVideos(null)}
+          videos={selectedDayVideos.videos}
+          title={selectedDayVideos.videos.length === 1 ? '作品详情' : `${selectedDayVideos.date} 发布巅峰作品集`}
+          t={t}
+        />
+      )}
       
       <style>{`
         @keyframes marquee {

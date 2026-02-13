@@ -19,7 +19,6 @@ export const GeminiInsights: React.FC<Props> = ({ videos, t }) => {
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       
-      // Prepare rich dataset for high-quality analysis
       const topPerformers = [...videos]
         .sort((a, b) => b.Views - a.Views)
         .slice(0, 6)
@@ -49,21 +48,20 @@ export const GeminiInsights: React.FC<Props> = ({ videos, t }) => {
 - 市场日均增量：${stats.avgViewsPerDay.toLocaleString()}
 - 头部作品详情：${JSON.stringify(topPerformers)}
 
-请基于以上数据，对比 2025 年的行业普遍趋势（2025年以传统贺岁和感官刺激为主），输出一份【深度洞察报告】：
+请基于以上数据，对比 2025 年的行业普遍趋势，输出一份【深度洞察报告】：
 
 1. **流量表现与增长势头 (Quantitative)**：利用 ViewsPerDay 和 RankMomentum 分析当前的爆发力。判断哪些作品具有“长尾效应”，哪些是“短期洗脑”。
-2. **观众参与度与质感 (Qualitative)**：分析点赞/评论比。结合 CreativeAdvice 探讨观众审美是否从去年的“热闹就好”转向了更高的内容质感要求。
-3. **跨维度对比 (2025 vs 2026)**：从制作规格、叙事长度、以及品牌商（如银行、电讯、快消）的嵌入方式，分析今年是否实现了从“感官刺激”到“情感共鸣”的跃迁。
+2. **观众参与度与质感 (Qualitative)**：分析点赞/评论比。探讨观众审美是否从“热闹就好”转向了更高的内容质感要求。
+3. **跨维度对比 (2025 vs 2026)**：从制作规格、叙事长度、以及品牌商的嵌入方式，分析今年是否实现了从“感官刺激”到“情感共鸣”的跃迁。
 4. **策略性建议 (Strategic)**：总结今年成功的关键因子 (Success Factors)，并为未来的创作提供 3 条基于数据的改进方向。
 
 要求：
 - 使用【简体中文】。
 - 采用【Markdown】排版，使用加粗和列点。
-- 语气专业、犀利且富有前瞻性。
 - 直接输出分析报告，不要包含任何前导词或引号。`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3-pro-preview', // Using Pro for deeper reasoning requested
+        model: 'gemini-3-pro-preview',
         contents: prompt,
       });
 
@@ -84,13 +82,11 @@ export const GeminiInsights: React.FC<Props> = ({ videos, t }) => {
 
   return (
     <div className="relative overflow-hidden group">
-      {/* Decorative Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-red-600/5 via-amber-500/5 to-transparent rounded-[2.5rem] md:rounded-[4rem] -z-10 transition-all duration-1000 group-hover:scale-105"></div>
       
       <div className="bg-white/40 backdrop-blur-xl border border-red-100/50 rounded-[2.5rem] md:rounded-[4rem] p-8 md:p-12 shadow-xl shadow-red-900/5 relative">
         <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
           
-          {/* AI Icon Section */}
           <div className="shrink-0 relative">
             <div className="absolute -inset-4 bg-gradient-to-tr from-red-600 to-amber-500 rounded-full blur-xl opacity-20 animate-pulse"></div>
             <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-red-600 to-amber-600 rounded-3xl flex items-center justify-center shadow-lg relative z-10">
@@ -105,7 +101,6 @@ export const GeminiInsights: React.FC<Props> = ({ videos, t }) => {
             </div>
           </div>
 
-          {/* Content Section */}
           <div className="flex-1 text-center md:text-left">
             <div className="flex flex-col md:flex-row items-center gap-3 mb-8">
               <h3 className="text-xl md:text-2xl font-black text-red-950 font-cny uppercase tracking-tight">
@@ -126,7 +121,7 @@ export const GeminiInsights: React.FC<Props> = ({ videos, t }) => {
               </div>
             ) : error ? (
               <div className="flex flex-col items-center md:items-start">
-                <p className="text-red-900/40 text-sm font-medium mb-4 italic">无法加载 AI 深度分析，请稍后再试。</p>
+                <p className="text-red-900/40 text-sm font-medium mb-4">无法加载 AI 深度分析，请稍后再试。</p>
                 <button 
                   onClick={generateInsight}
                   className="text-red-600 font-black text-xs uppercase tracking-widest flex items-center gap-2 hover:underline"
@@ -139,7 +134,6 @@ export const GeminiInsights: React.FC<Props> = ({ videos, t }) => {
                 <div className="absolute -left-10 -top-4 opacity-[0.03] hidden md:block">
                   <TrendingUp size={120} className="text-red-600" />
                 </div>
-                {/* Rendering Markdown-like content via simple string methods or CSS */}
                 <div className="prose prose-red max-w-none text-base md:text-lg text-red-950/80 font-medium leading-relaxed font-cny animate-in fade-in slide-in-from-left-4 duration-1000 whitespace-pre-wrap">
                   {insight.split('\n').map((line, i) => {
                     const isHeader = line.startsWith('###') || line.startsWith('**');

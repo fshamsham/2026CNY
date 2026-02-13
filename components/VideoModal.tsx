@@ -1,4 +1,6 @@
+
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { VideoData, Translations } from '../types';
 import { X, Youtube, Heart, Eye, Play, MessageSquare, ChevronDown, ChevronUp, ExternalLink, TrendingUp, Trophy, Calendar } from 'lucide-react';
 
@@ -19,7 +21,7 @@ const DescriptionText: React.FC<{ text: string; t: Translations }> = ({ text, t 
 
   return (
     <div className="mt-2">
-      <p className={`text-[13px] md:text-[13px] text-red-900/70 font-medium leading-relaxed max-w-4xl italic whitespace-pre-wrap break-words transition-all duration-500 ${!isExpanded ? 'line-clamp-2' : ''}`}>
+      <p className={`text-[13px] md:text-[13px] text-red-900/70 font-medium leading-relaxed max-w-4xl whitespace-pre-wrap break-words transition-all duration-500 ${!isExpanded ? 'line-clamp-2' : ''}`}>
         {text}
       </p>
       {shouldShowToggle && (
@@ -56,8 +58,8 @@ export const VideoModal: React.FC<Props> = ({ isOpen, onClose, videos, title, t 
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-red-950/25 backdrop-blur-xl animate-in fade-in duration-500">
+  return createPortal(
+    <div className="fixed inset-0 z-[110] flex items-center justify-center p-2 sm:p-4 bg-red-950/25 backdrop-blur-xl animate-in fade-in duration-500">
       <div className="bg-[#fffbf2] border border-red-100 rounded-[2rem] md:rounded-[4rem] w-full max-w-7xl max-h-[96vh] overflow-hidden flex flex-col shadow-[0_40px_100px_-20px_rgba(220,38,38,0.25)] animate-in zoom-in-95 duration-500">
         
         {/* Header */}
@@ -208,6 +210,7 @@ export const VideoModal: React.FC<Props> = ({ isOpen, onClose, videos, title, t 
           })}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
