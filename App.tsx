@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { VideoData } from './types';
 import { TRANSLATIONS } from './constants';
@@ -132,7 +133,7 @@ const App: React.FC = () => {
   const navItems = [
     { id: 'metrics', label: '数据指标概览', icon: BarChart3 },
     { id: 'ranking', label: '新年歌风云榜', icon: Trophy },
-    { id: 'peaks', label: '单日发布巅峰', icon: Flame },
+    { id: 'peaks', label: '新年歌曲发布趋势', icon: Flame },
     { id: 'calendar', label: '新年歌曲发布日历', icon: Calendar },
     { id: 'pun-stats', label: '标题用“马”关键词/谐音', icon: Zap },
     { id: 'hashtags', label: '热门标签分析', icon: Hash }
@@ -348,11 +349,11 @@ const App: React.FC = () => {
                 </h3>
               </div>
               <p className="text-red-900/50 text-[11px] md:text-[13px] leading-relaxed font-medium max-w-lg">
-                记录马来西亚贺岁歌曲的每一个音符。这是一个致力于展示 2026 农历新年音乐艺术与表现的数据看板，通过数字化方式连接创作者、品牌方与广大乐迷，让文化魅力被更精准地看见。
+                以数据刻画并见证马来西亚新年歌曲的创作与传播轨迹。
               </p>
               <div className="flex flex-col gap-1.5 mt-3">
                 <p className="text-red-900/20 text-[9px] font-black uppercase tracking-[0.4em] font-cny">
-                  © 2026 CNY MUSIC INSIGHTS • 马来西亚新年歌探索计划
+                  © 2026 CNY MUSIC INSIGHTS • 马来西亚新年歌曲
                 </p>
                 <div className="flex items-center gap-2 text-red-900/20">
                   <Heart size={10} fill="currentColor" className="text-red-600/20" />

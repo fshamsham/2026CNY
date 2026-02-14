@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { VideoData, Translations } from '../types';
 import { Trophy, TrendingUp, Eye, Heart, Calendar, ExternalLink } from 'lucide-react';
@@ -50,9 +51,19 @@ const RankItem: React.FC<{
       <h4 className="font-black text-red-950 text-lg md:text-2xl line-clamp-3 group-hover:text-red-600 transition-colors leading-tight mb-2 md:mb-4">
         {video.VideoTitle}
       </h4>
-      <p className="text-[11px] md:text-xs text-red-900/40 uppercase font-black tracking-[0.15em] md:tracking-[0.2em] truncate mb-4 md:mb-6">
-        {video.ChannelName}
-      </p>
+      
+      <div className="flex items-center gap-2 mb-4 md:mb-6">
+        <div className="w-5 h-5 md:w-6 md:h-6 rounded-md md:rounded-lg overflow-hidden border border-red-100 shrink-0 shadow-sm">
+          <img 
+            src={video.ChannelAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(video.ChannelName)}&background=random`} 
+            className="w-full h-full object-cover" 
+            alt={video.ChannelName} 
+          />
+        </div>
+        <p className="text-[11px] md:text-xs text-red-900/40 uppercase font-black tracking-[0.15em] md:tracking-[0.2em] truncate">
+          {video.ChannelName}
+        </p>
+      </div>
       
       <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
         <div className="flex items-baseline gap-2 bg-red-50/50 self-start px-3 py-1.5 rounded-lg md:bg-transparent md:p-0">

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { VideoData, Translations } from '../types';
 import { Eye, Clapperboard, Heart, MessageSquare, TrendingUp } from 'lucide-react';
@@ -49,6 +50,7 @@ export const MetricsSection: React.FC<Props> = ({ videos, t }) => {
 
   const monthlyCounts = useMemo(() => {
     const counts: Record<string, number> = {
+      '2025-10': 0,
       '2025-11': 0,
       '2025-12': 0,
       '2026-01': 0,
@@ -85,6 +87,10 @@ export const MetricsSection: React.FC<Props> = ({ videos, t }) => {
           <div className="absolute top-[105%] left-1/2 -translate-x-1/2 px-4 py-3 bg-red-950 text-white text-[10px] md:text-xs font-black rounded-2xl opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-300 translate-y-2 group-hover:translate-y-0 whitespace-nowrap z-[60] shadow-2xl border border-white/10">
             {stat.isTotal ? (
               <div className="flex flex-col gap-1.5 text-left min-w-[140px]">
+                <div className="flex justify-between items-center gap-6">
+                  <span className="text-amber-400">2025-10:</span>
+                  <span className="font-black">{monthlyCounts['2025-10']} 首</span>
+                </div>
                 <div className="flex justify-between items-center gap-6">
                   <span className="text-amber-400">2025-11:</span>
                   <span className="font-black">{monthlyCounts['2025-11']} 首</span>

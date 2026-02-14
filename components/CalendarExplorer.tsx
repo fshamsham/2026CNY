@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { VideoData, Translations } from '../types';
 import { ChevronLeft, ChevronRight, Play, Info, Calendar as CalendarIcon, List as ListIcon, Search, X, Sparkles, Plus, ChevronDown, ChevronUp, Eye, Heart, Calendar, ArrowDownWideNarrow } from 'lucide-react';
@@ -99,20 +100,48 @@ const MiniHeatmap: React.FC<{
             let bgColor = 'bg-transparent';
             let borderColor = 'border-gray-100/50';
             let intensityClass = '';
+            let textColor = 'text-red-950/80';
             
             if (count > 0) {
+              // Level 1: Very Low (1-2 videos)
               bgColor = 'bg-red-50';
               borderColor = 'border-red-100';
+              textColor = 'text-red-900';
             }
-            if (count > 2) {
-              bgColor = 'bg-red-200';
-              borderColor = 'border-red-300/30';
-              intensityClass = 'shadow-[0_0_15px_rgba(220,38,38,0.08)]';
+            if (count >= 3) {
+              // Level 2: Low-Medium (3-4 videos)
+              bgColor = 'bg-red-100';
+              borderColor = 'border-red-200';
+              intensityClass = 'shadow-sm';
+              textColor = 'text-red-950';
             }
-            if (count > 5) {
-              bgColor = 'bg-gradient-to-br from-red-600 to-red-700';
-              borderColor = 'border-red-700/30';
-              intensityClass = 'shadow-[0_15px_30px_-5px_rgba(220,38,38,0.4)]';
+            if (count >= 5) {
+              // Level 3: Medium (5-6 videos)
+              bgColor = 'bg-red-300';
+              borderColor = 'border-red-400';
+              intensityClass = 'shadow-sm';
+              textColor = 'text-red-950';
+            }
+            if (count >= 7) {
+              // Level 4: High (7-9 videos)
+              bgColor = 'bg-red-500';
+              borderColor = 'border-red-600';
+              intensityClass = 'shadow-md';
+              textColor = 'text-white';
+            }
+            if (count >= 10) {
+              // Level 5: Explosion (10-14 videos)
+              bgColor = 'bg-red-700';
+              borderColor = 'border-red-800';
+              intensityClass = 'shadow-lg shadow-red-900/20';
+              textColor = 'text-white';
+            }
+            if (count >= 15) {
+              // Level 6: Zenith (15+ videos)
+              bgColor = 'bg-red-950';
+              borderColor = 'border-black';
+              intensityClass = 'shadow-xl shadow-red-950/40 ring-2 ring-red-600/20';
+              textColor = 'text-amber-400';
             }
 
             return (
@@ -124,9 +153,14 @@ const MiniHeatmap: React.FC<{
                   <div className="absolute -inset-1.5 rounded-[12px] md:rounded-[22px] border-2 border-amber-500/40 animate-pulse" />
                 )}
                 
-                {count > 5 && (
-                  <div className="absolute inset-0 bg-white/20 animate-pulse rounded-2xl"></div>
+                {count >= 10 && (
+                  <div className={`absolute inset-0 bg-white/10 animate-pulse rounded-2xl ${count >= 15 ? 'opacity-30' : 'opacity-20'}`}></div>
                 )}
+
+                {/* Day Number Label */}
+                <span className={`relative z-10 text-[10px] md:text-sm font-black transition-colors ${textColor}`}>
+                  {dayNum}
+                </span>
 
                 <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-red-950 text-white text-[10px] font-black px-3 py-1.5 rounded-xl opacity-0 group-hover/cell:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0 pointer-events-none whitespace-nowrap z-20 shadow-2xl border border-white/10">
                   {dayNum}日: {count} 首
