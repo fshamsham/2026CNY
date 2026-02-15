@@ -411,7 +411,7 @@ const App: React.FC = () => {
           isOpen={!!selectedDayVideos}
           onClose={() => setSelectedDayVideos(null)}
           videos={selectedDayVideos.videos}
-          title={selectedDayVideos.videos.length === 1 ? '作品详情' : `${selectedDayVideos.date} 发布巅峰作品集`}
+          title={selectedDayVideos.videos.length === 1 ? '作品详情' : `2026年${selectedDayVideos.date} 作品集`}
           t={t}
         />
       )}

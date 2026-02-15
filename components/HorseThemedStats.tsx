@@ -294,38 +294,38 @@ export const HorseThemedStats: React.FC<Props> = ({ videos, onModalToggle }) => 
             </div>
           </div>
 
-          {/* Stats List Section */}
-          <div className="w-full space-y-6 md:space-y-12 max-w-6xl self-start">
-            <div className="flex items-center justify-start mb-4">
-              <div className="flex items-center gap-2 md:gap-3 bg-red-50/50 px-6 py-2.5 rounded-full border border-red-100">
-                <PieChart size={16} className="text-red-600 md:size-5" />
-                <h3 className="text-[14px] md:text-xl font-black text-red-950 uppercase tracking-tight">创意关键词使用热度榜</h3>
+          {/* Stats List Section - Centered using mx-auto and justify-center */}
+          <div className="w-full space-y-8 md:space-y-12 max-w-6xl mx-auto">
+            <div className="flex items-center justify-center mb-6 md:mb-10">
+              <div className="flex items-center gap-3 md:gap-4 bg-red-50/50 px-8 py-3 rounded-full border border-red-100 shadow-sm">
+                <PieChart size={18} className="text-red-600 md:size-6" />
+                <h3 className="text-[16px] md:text-2xl font-black text-red-950 uppercase tracking-tight">创意关键词使用热度榜</h3>
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 md:gap-y-8 md:gap-x-16">
-              <div className="space-y-4 md:space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-5 md:gap-y-10 md:gap-x-20">
+              <div className="space-y-5 md:space-y-10">
                 {leftCol.map((stat, idx) => renderStatItem(stat, idx, idx))}
               </div>
-              <div className="space-y-4 md:space-y-8">
+              <div className="space-y-5 md:space-y-10">
                 {rightCol.map((stat, idx) => renderStatItem(stat, idx, idx + midpoint))}
               </div>
             </div>
 
             {(hasRemaining || showAll) && (
-              <div className="flex justify-center pt-6 md:pt-10">
+              <div className="flex justify-center pt-8 md:pt-14">
                 <button 
                   onClick={() => setShowAll(!showAll)}
-                  className="group flex items-center justify-center gap-3 bg-red-600 hover:bg-red-700 text-white px-8 md:px-10 py-3.5 md:py-5 rounded-xl md:rounded-[1.5rem] font-black text-[10px] md:text-sm uppercase tracking-[0.2em] shadow-xl shadow-red-900/10 transition-all duration-300 active:scale-95 hover:shadow-red-900/20"
+                  className="group flex items-center justify-center gap-3 bg-red-600 hover:bg-red-700 text-white px-8 md:px-12 py-4 md:py-6 rounded-2xl md:rounded-[2rem] font-black text-[10px] md:text-sm uppercase tracking-[0.2em] shadow-xl shadow-red-900/10 transition-all duration-300 active:scale-95 hover:shadow-red-900/20"
                 >
                   {showAll ? (
                     <>
-                      <ChevronUp size={18} className="group-hover:-translate-y-0.5 transition-transform" />
+                      <ChevronUp size={20} className="group-hover:-translate-y-0.5 transition-transform" />
                       {t.showLess}
                     </>
                   ) : (
                     <>
-                      <ChevronDown size={18} className="group-hover:translate-y-0.5 transition-transform" />
+                      <ChevronDown size={20} className="group-hover:translate-y-0.5 transition-transform" />
                       {t.showMore}
                     </>
                   )}
@@ -337,8 +337,8 @@ export const HorseThemedStats: React.FC<Props> = ({ videos, onModalToggle }) => 
       </div>
 
       {selectedStat && createPortal(
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-2 sm:p-4 bg-red-950/25 backdrop-blur-xl animate-in fade-in duration-500">
-          <div className="bg-[#fffbf2] border border-red-100 rounded-[2rem] md:rounded-[4rem] w-full max-w-7xl max-h-[96vh] overflow-hidden flex flex-col shadow-[0_40px_100px_-20px_rgba(220,38,38,0.25)] animate-in zoom-in-95 duration-500">
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 md:p-12 lg:p-16 bg-red-950/25 backdrop-blur-xl animate-in fade-in duration-500">
+          <div className="bg-[#fffbf2] border border-red-100 rounded-[2rem] md:rounded-[4rem] w-full max-w-7xl h-[85vh] overflow-hidden flex flex-col shadow-[0_40px_100px_-20px_rgba(220,38,38,0.25)] animate-in zoom-in-95 duration-500">
             <div className="px-5 py-4 md:px-12 md:py-10 border-b border-gray-100 flex flex-col gap-4 bg-gray-50/50 sticky top-0 z-10">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-3 md:gap-4 overflow-hidden">

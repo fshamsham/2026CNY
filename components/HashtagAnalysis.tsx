@@ -1,8 +1,7 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { VideoData, Translations } from '../types';
-import { Hash, Sparkles, PlayCircle, X, Play, MessageSquareQuote, ChevronDown, ChevronUp } from 'lucide-react';
+import { Hash, Sparkles, PlayCircle, X, Play, MessageSquareQuote, ChevronDown, ChevronUp, Eye, Heart, Calendar, ArrowDownWideNarrow } from 'lucide-react';
 import { VideoModal } from './VideoModal';
 import { TRANSLATIONS } from '../constants';
 
@@ -17,10 +16,18 @@ interface HashtagStat {
   videos: VideoData[];
 }
 
+const compactFormatter = new Intl.NumberFormat('en-US', {
+  notation: 'compact',
+  maximumFractionDigits: 1,
+});
+
+type SortOption = 'views' | 'likes' | 'date';
+
 export const HashtagAnalysis: React.FC<Props> = ({ videos, onModalToggle }) => {
   const [selectedTag, setSelectedTag] = useState<HashtagStat | null>(null);
   const [detailedVideo, setDetailedVideo] = useState<VideoData | null>(null);
   const [showAllTags, setShowAllTags] = useState(false);
+  const [sortBy, setSortBy] = useState<SortOption>('views');
   const t = TRANSLATIONS;
 
   useEffect(() => {
@@ -57,6 +64,15 @@ export const HashtagAnalysis: React.FC<Props> = ({ videos, onModalToggle }) => {
     if (showAllTags) return hashtagStats.slice(0, 60);
     return hashtagStats.slice(0, window.innerWidth < 768 ? 15 : 30);
   }, [hashtagStats, showAllTags]);
+
+  const sortedVideos = useMemo(() => {
+    if (!selectedTag) return [];
+    return [...selectedTag.videos].sort((a, b) => {
+      if (sortBy === 'views') return b.Views - a.Views;
+      if (sortBy === 'likes') return b.Likes - a.Likes;
+      return new Date(b.PublishDate).getTime() - new Date(a.PublishDate).getTime();
+    });
+  }, [selectedTag, sortBy]);
 
   const hasRemaining = hashtagStats.length > (showAllTags ? 0 : visibleTags.length);
 
@@ -139,33 +155,67 @@ export const HashtagAnalysis: React.FC<Props> = ({ videos, onModalToggle }) => {
       </div>
 
       {selectedTag && createPortal(
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-2 sm:p-4 bg-red-950/25 backdrop-blur-xl animate-in fade-in duration-500">
-          <div className="bg-[#fffbf2] border border-red-100 rounded-[2rem] md:rounded-[4rem] w-full max-w-7xl max-h-[96vh] overflow-hidden flex flex-col shadow-[0_40px_100px_-20px_rgba(220,38,38,0.25)] animate-in zoom-in-95 duration-500">
-            <div className="px-5 py-4 md:px-12 md:py-10 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 sticky top-0 z-10">
-              <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
-                <div className="bg-red-600 p-2 md:p-3 rounded-xl md:rounded-2xl shadow-xl shadow-red-100 shrink-0">
-                  <Hash size={18} className="text-white md:size-6" />
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 md:p-12 lg:p-16 bg-red-950/25 backdrop-blur-xl animate-in fade-in duration-500">
+          <div className="bg-[#fffbf2] border border-red-100 rounded-[2rem] md:rounded-[4rem] w-full max-w-7xl h-[85vh] overflow-hidden flex flex-col shadow-[0_40px_100px_-20px_rgba(220,38,38,0.25)] animate-in zoom-in-95 duration-500">
+            <div className="px-5 py-4 md:px-12 md:py-10 border-b border-gray-100 flex flex-col gap-4 bg-gray-50/50 sticky top-0 z-10">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
+                  <div className="bg-red-600 p-2 md:p-3 rounded-xl md:rounded-2xl shadow-xl shadow-red-100 shrink-0">
+                    <Hash size={18} className="text-white md:size-6" />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-lg md:text-xl font-black text-red-950 tracking-tight flex items-baseline gap-2 md:gap-3 uppercase truncate">
+                      {selectedTag.tag}
+                      <span className="text-[10px] md:text-base font-bold text-red-900/30 uppercase tracking-[0.2em]">{selectedTag.count} 首作品</span>
+                    </h3>
+                    <p className="text-[8px] md:text-[10px] font-black text-red-900/40 uppercase tracking-[0.1em] md:tracking-[0.3em] mt-0.5 truncate">
+                      标签聚类展示 • Hashtag Cluster Detail
+                    </p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <h3 className="text-lg md:text-3xl font-black text-red-950 tracking-tight flex items-baseline gap-2 md:gap-3 uppercase truncate">
-                    {selectedTag.tag}
-                    <span className="text-[10px] md:text-base font-bold text-red-900/30 uppercase tracking-[0.2em]">{selectedTag.count} 首作品</span>
-                  </h3>
-                  <p className="text-[8px] md:text-[10px] font-black text-red-900/40 uppercase tracking-[0.1em] md:tracking-[0.3em] mt-0.5 truncate">
-                    标签聚类展示 • Hashtag Cluster Detail
-                  </p>
-                </div>
+                <button 
+                  onClick={() => setSelectedTag(null)}
+                  className="p-2 md:p-3 bg-white hover:bg-red-600 text-red-900/20 hover:text-white rounded-full transition-all duration-300 shadow-sm border border-gray-100 active:scale-90 shrink-0 ml-2"
+                >
+                  <X size={18} className="md:size-6" />
+                </button>
               </div>
-              <button 
-                onClick={() => setSelectedTag(null)}
-                className="p-2 md:p-3 bg-white hover:bg-red-600 text-red-900/20 hover:text-white rounded-full transition-all duration-300 shadow-sm border border-gray-100 active:scale-90 shrink-0 ml-2"
-              >
-                <X size={18} className="md:size-6" />
-              </button>
+
+              {/* Sorting Tabs */}
+              {selectedTag.count > 1 && (
+                <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
+                  <div className="flex items-center gap-1.5 md:gap-2 bg-white/50 p-1 rounded-xl self-start border border-gray-200/50">
+                    <button 
+                      onClick={() => setSortBy('views')}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-[10px] md:text-xs font-black uppercase tracking-widest transition-all ${sortBy === 'views' ? 'bg-red-600 text-white shadow-lg shadow-red-100' : 'text-gray-400 hover:text-red-900'}`}
+                    >
+                      <Eye size={12} className="md:size-3.5" />
+                      播放量
+                      {sortBy === 'views' && <ArrowDownWideNarrow size={12} className="animate-bounce" />}
+                    </button>
+                    <button 
+                      onClick={() => setSortBy('likes')}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-[10px] md:text-xs font-black uppercase tracking-widest transition-all ${sortBy === 'likes' ? 'bg-red-600 text-white shadow-lg shadow-red-100' : 'text-gray-400 hover:text-red-900'}`}
+                    >
+                      <Heart size={12} className="md:size-3.5" />
+                      点赞数
+                      {sortBy === 'likes' && <ArrowDownWideNarrow size={12} className="animate-bounce" />}
+                    </button>
+                    <button 
+                      onClick={() => setSortBy('date')}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-[10px] md:text-xs font-black uppercase tracking-widest transition-all ${sortBy === 'date' ? 'bg-red-600 text-white shadow-lg shadow-red-100' : 'text-gray-400 hover:text-red-900'}`}
+                    >
+                      <Calendar size={12} className="md:size-3.5" />
+                      发布日期
+                      {sortBy === 'date' && <ArrowDownWideNarrow size={12} className="animate-bounce" />}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
             
             <div className="flex-1 overflow-y-auto p-4 md:p-12 space-y-4 md:space-y-10 custom-scrollbar overscroll-contain bg-paper/30">
-              {selectedTag.videos.map((v, i) => (
+              {sortedVideos.map((v, i) => (
                 <div 
                   key={v.VideoURL + i} 
                   onClick={() => {
@@ -187,13 +237,31 @@ export const HashtagAnalysis: React.FC<Props> = ({ videos, onModalToggle }) => {
                     <h5 className="text-base md:text-xl font-black text-red-950 leading-tight mb-3 md:mb-6 break-words">
                       {v.VideoTitle}
                     </h5>
-                    <div className="flex items-center gap-2.5 md:gap-4">
-                      <div className="w-5 h-5 md:w-8 md:h-8 rounded-lg bg-red-50 overflow-hidden border border-red-100 shrink-0">
-                        <img src={v.ChannelAvatar} className="w-full h-full object-cover" alt="avatar" />
+                    
+                    <div className="flex flex-col gap-2 md:gap-3">
+                      <div className="flex items-center gap-2.5 md:gap-4">
+                        <div className="w-5 h-5 md:w-8 md:h-8 rounded-lg bg-red-50 overflow-hidden border border-red-100 shrink-0">
+                          <img src={v.ChannelAvatar} className="w-full h-full object-cover" alt="avatar" />
+                        </div>
+                        <p className="text-xs md:text-base font-black text-red-900 uppercase tracking-[0.1em] md:tracking-[0.2em] truncate">
+                          {v.ChannelName}
+                        </p>
                       </div>
-                      <p className="text-xs md:text-base font-black text-red-900 uppercase tracking-[0.1em] md:tracking-[0.2em] truncate">
-                        {v.ChannelName}
-                      </p>
+
+                      <div className="flex items-center gap-3 md:gap-5">
+                        <div className="flex items-center gap-1.5 text-red-900/40">
+                          <Eye size={12} className="md:size-4 text-red-600" />
+                          <span className="text-[10px] md:text-sm font-black tabular-nums">{compactFormatter.format(v.Views)}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-red-900/40">
+                          <Heart size={12} className="md:size-4 text-red-500" />
+                          <span className="text-[10px] md:text-sm font-black tabular-nums">{compactFormatter.format(v.Likes)}</span>
+                        </div>
+                        <div className="hidden md:flex items-center gap-1.5 text-red-900/40">
+                          <Calendar size={14} className="text-red-600" />
+                          <span className="text-[10px] md:text-sm font-black">{new Date(v.PublishDate).toLocaleDateString()}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

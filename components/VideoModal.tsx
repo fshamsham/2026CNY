@@ -59,8 +59,8 @@ export const VideoModal: React.FC<Props> = ({ isOpen, onClose, videos, title, t 
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-2 sm:p-4 bg-red-950/25 backdrop-blur-xl animate-in fade-in duration-500">
-      <div className="bg-[#fffbf2] border border-red-100 rounded-[2rem] md:rounded-[4rem] w-full max-w-7xl max-h-[96vh] overflow-hidden flex flex-col shadow-[0_40px_100px_-20px_rgba(220,38,38,0.25)] animate-in zoom-in-95 duration-500">
+    <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 md:p-12 lg:p-16 bg-red-950/25 backdrop-blur-xl animate-in fade-in duration-500">
+      <div className="bg-[#fffbf2] border border-red-100 rounded-[2rem] md:rounded-[4rem] w-full max-w-7xl h-[85vh] overflow-hidden flex flex-col shadow-[0_40px_100px_-20px_rgba(220,38,38,0.25)] animate-in zoom-in-95 duration-500">
         
         {/* Header */}
         <div className="px-5 py-4 md:px-10 lg:px-14 md:py-8 border-b border-red-50 flex justify-between items-center bg-white/60 sticky top-0 z-20">

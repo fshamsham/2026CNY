@@ -1,7 +1,7 @@
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { VideoData, Translations } from '../types';
-import { ChevronLeft, ChevronRight, Play, Info, Calendar as CalendarIcon, List as ListIcon, Search, X, Sparkles, Plus, ChevronDown, ChevronUp, Eye, Heart, Calendar, ArrowDownWideNarrow } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Info, Calendar as CalendarIcon, List as ListIcon, Search, X, Sparkles, Plus, ChevronDown, ChevronUp, Eye, Heart, Calendar, ArrowDownWideNarrow, Filter } from 'lucide-react';
 import { VideoModal } from './VideoModal';
 
 interface Props {
@@ -18,7 +18,9 @@ const MiniHeatmap: React.FC<{
   canPrev: boolean;
   canNext: boolean;
   t: Translations;
-}> = ({ currentDate, monthVideos, onPrev, onNext, canPrev, canNext, t }) => {
+  selectedDate: string | null;
+  onDateClick: (date: string) => void;
+}> = ({ currentDate, monthVideos, onPrev, onNext, canPrev, canNext, t, selectedDate, onDateClick }) => {
   const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
   const startOffset = (firstDayOfMonth + 6) % 7;
@@ -95,7 +97,9 @@ const MiniHeatmap: React.FC<{
           
           {dayStats.map((count, i) => {
             const dayNum = i + 1;
+            const dateKey = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${dayNum.toString().padStart(2, '0')}`;
             const isToday = isCurrentMonth && today.getDate() === dayNum;
+            const isSelected = selectedDate === dateKey;
             
             let bgColor = 'bg-transparent';
             let borderColor = 'border-gray-100/50';
@@ -103,41 +107,35 @@ const MiniHeatmap: React.FC<{
             let textColor = 'text-red-950/80';
             
             if (count > 0) {
-              // Level 1: Very Low (1-2 videos)
               bgColor = 'bg-red-50';
               borderColor = 'border-red-100';
               textColor = 'text-red-900';
             }
             if (count >= 3) {
-              // Level 2: Low-Medium (3-4 videos)
               bgColor = 'bg-red-100';
               borderColor = 'border-red-200';
               intensityClass = 'shadow-sm';
               textColor = 'text-red-950';
             }
             if (count >= 5) {
-              // Level 3: Medium (5-6 videos)
               bgColor = 'bg-red-300';
               borderColor = 'border-red-400';
               intensityClass = 'shadow-sm';
               textColor = 'text-red-950';
             }
             if (count >= 7) {
-              // Level 4: High (7-9 videos)
               bgColor = 'bg-red-500';
               borderColor = 'border-red-600';
               intensityClass = 'shadow-md';
               textColor = 'text-white';
             }
             if (count >= 10) {
-              // Level 5: Explosion (10-14 videos)
               bgColor = 'bg-red-700';
               borderColor = 'border-red-800';
               intensityClass = 'shadow-lg shadow-red-900/20';
               textColor = 'text-white';
             }
             if (count >= 15) {
-              // Level 6: Zenith (15+ videos)
               bgColor = 'bg-red-950';
               borderColor = 'border-black';
               intensityClass = 'shadow-xl shadow-red-950/40 ring-2 ring-red-600/20';
@@ -147,13 +145,18 @@ const MiniHeatmap: React.FC<{
             return (
               <div 
                 key={i} 
-                className={`aspect-square w-full rounded-lg md:rounded-2xl transition-all duration-500 relative border flex items-center justify-center ${bgColor} ${borderColor} ${intensityClass} hover:scale-110 hover:z-10 cursor-help group/cell`}
+                onClick={() => count > 0 && onDateClick(dateKey)}
+                className={`aspect-square w-full rounded-lg md:rounded-2xl transition-all duration-300 relative border flex items-center justify-center cursor-pointer active:scale-95
+                  ${bgColor} ${borderColor} ${intensityClass} 
+                  ${isSelected ? 'ring-4 ring-amber-500 ring-offset-2 z-20 scale-105 shadow-2xl' : 'hover:scale-110 hover:z-10'}
+                  ${count === 0 ? 'opacity-30 pointer-events-none' : ''}
+                `}
               >
                 {isToday && (
                   <div className="absolute -inset-1.5 rounded-[12px] md:rounded-[22px] border-2 border-amber-500/40 animate-pulse" />
                 )}
                 
-                {count >= 10 && (
+                {(count >= 10 || isSelected) && (
                   <div className={`absolute inset-0 bg-white/10 animate-pulse rounded-2xl ${count >= 15 ? 'opacity-30' : 'opacity-20'}`}></div>
                 )}
 
@@ -211,6 +214,8 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
   const [hoveredDay, setHoveredDay] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [visibleGroupsCount, setVisibleGroupsCount] = useState(3);
+  const [selectedDateFilter, setSelectedDateFilter] = useState<string | null>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleResize = () => setIsMobileView(window.innerWidth < 768);
@@ -262,6 +267,7 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
 
   useEffect(() => {
     setCurrentDate(initialMonth);
+    setSelectedDateFilter(null);
   }, [initialMonth]);
 
   const searchResults = useMemo(() => {
@@ -286,9 +292,18 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
   }, [videos, currentDate]);
 
   const groupedVideos = useMemo(() => {
-    const list = isSearching ? searchResults : monthVideos;
-    const groups = new Map<string, VideoData[]>();
+    let list = isSearching ? searchResults : monthVideos;
     
+    // Apply date filter if exists (and we're in mobile heatmap view mode)
+    if (selectedDateFilter && isMobileView && !isSearching) {
+      list = list.filter(v => {
+        const d = new Date(v.PublishDate);
+        const key = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`;
+        return key === selectedDateFilter;
+      });
+    }
+
+    const groups = new Map<string, VideoData[]>();
     list.forEach(v => {
       const date = new Date(v.PublishDate);
       if (isNaN(date.getTime())) return;
@@ -298,7 +313,7 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
     });
     
     return Array.from(groups.entries()).sort((a, b) => b[0].localeCompare(a[0]));
-  }, [isSearching, searchResults, monthVideos]);
+  }, [isSearching, searchResults, monthVideos, selectedDateFilter, isMobileView]);
 
   const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
@@ -309,11 +324,17 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
   );
 
   const handlePrevMonth = () => {
-    if (currentMonthIdx > 0) setCurrentDate(availableMonths[currentMonthIdx - 1]);
+    if (currentMonthIdx > 0) {
+      setCurrentDate(availableMonths[currentMonthIdx - 1]);
+      setSelectedDateFilter(null); // Auto deselect selected date when month changes
+    }
   };
 
   const handleNextMonth = () => {
-    if (currentMonthIdx < availableMonths.length - 1) setCurrentDate(availableMonths[currentMonthIdx + 1]);
+    if (currentMonthIdx < availableMonths.length - 1) {
+      setCurrentDate(availableMonths[currentMonthIdx + 1]);
+      setSelectedDateFilter(null); // Auto deselect selected date when month changes
+    }
   };
 
   const monthNumber = (currentDate.getMonth() + 1).toString().padStart(2, '0');
@@ -325,7 +346,19 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
   const formatDateForModal = (dateStr: string) => {
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return dateStr;
-    return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+    return `${d.getMonth() + 1}月${d.getDate()}日`;
+  };
+
+  const handleHeatmapDateClick = (dateKey: string) => {
+    if (selectedDateFilter === dateKey) {
+      setSelectedDateFilter(null);
+    } else {
+      setSelectedDateFilter(dateKey);
+      // Optional: scroll slightly to the list
+      setTimeout(() => {
+        listRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+    }
   };
 
   const renderCalendar = () => {
@@ -347,7 +380,7 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
           key={d} 
           onMouseEnter={() => !isMobileView && dayVids.length > 0 && setHoveredDay(d)}
           onMouseLeave={() => setHoveredDay(null)}
-          onClick={() => dayVids.length > 0 && setSelectedDayVideos({ date: `${currentDate.getFullYear()}年${currentDate.getMonth() + 1}月${d}日`, videos: dayVids })}
+          onClick={() => dayVids.length > 0 && setSelectedDayVideos({ date: formatDateForModal(`${currentDate.getFullYear()}-${currentDate.getMonth()+1}-${d}`), videos: dayVids })}
           className={`h-20 md:h-32 p-1 md:p-3 transition-all cursor-pointer group flex flex-col justify-between relative overflow-hidden border-b border-r border-gray-100
             ${dayVids.length > 0 
               ? 'bg-white hover:bg-red-50/30' 
@@ -429,12 +462,45 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
       );
     }
 
+    const totalFilteredCount = groupedVideos.reduce((acc, [_, vids]) => acc + vids.length, 0);
     const visibleGroups = groupedVideos.slice(0, visibleGroupsCount);
     const hasMore = groupedVideos.length > visibleGroupsCount;
     const isExpanded = visibleGroupsCount > 3;
 
     return (
-      <div className="space-y-8 md:space-y-12">
+      <div className="space-y-8 md:space-y-12" ref={listRef}>
+        {/* Header with Filter Info - ONLY show when a date is selected and NOT searching */}
+        {selectedDateFilter && !isSearching && (
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 border-b border-red-50 pb-6">
+            <div className="flex items-center gap-3">
+               <div className="bg-red-600 p-2 rounded-xl">
+                  <ListIcon size={18} className="text-white" />
+               </div>
+               <div>
+                  <h4 className="font-black text-red-950 text-lg md:text-xl tracking-tight">
+                    按日期筛选
+                  </h4>
+                  <p className="text-red-900/40 text-[10px] font-black uppercase tracking-widest mt-0.5">
+                     共 {totalFilteredCount} 首作品
+                  </p>
+               </div>
+            </div>
+
+            <div className="animate-in fade-in zoom-in-95 duration-300">
+               <button 
+                  onClick={() => setSelectedDateFilter(null)}
+                  className="group flex items-center gap-2 bg-amber-50 hover:bg-red-600 px-4 py-2 rounded-full border border-amber-200 hover:border-red-600 transition-all shadow-sm active:scale-95"
+               >
+                  <Filter size={14} className="text-amber-600 group-hover:text-white" />
+                  <span className="text-[11px] font-black text-amber-900 group-hover:text-white uppercase tracking-tight">
+                    {selectedDateFilter.split('-').slice(1).join('/')} 
+                  </span>
+                  <X size={14} className="text-amber-600 group-hover:text-white" />
+               </button>
+            </div>
+          </div>
+        )}
+
         {visibleGroups.map(([dateKey, vids]) => {
           const date = new Date(dateKey);
           const dMonth = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -462,7 +528,7 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
                     <div className="relative w-28 md:w-40 aspect-video shrink-0">
                       <img src={v.Thumbnail} className="w-full h-full rounded-xl md:rounded-2xl object-cover border border-gray-50 shadow-sm transition-transform duration-700 group-hover:scale-105" alt="thumb" />
                       <div className="absolute inset-0 bg-black/5 group-hover:bg-red-600/10 transition-colors rounded-xl md:rounded-2xl flex items-center justify-center">
-                        <div className="bg-white/90 p-2 md:p-2.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
+                        <div className="bg-white/90 p-2 md:p-4 rounded-full shadow-lg opacity-0 group-hover/item:opacity-100 transform translate-y-2 group-hover/item:translate-y-0 transition-all duration-500">
                            <Play size={16} className="text-red-600" fill="currentColor" />
                         </div>
                       </div>
@@ -473,7 +539,7 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
                       </h5>
                       <div className="flex items-center gap-1.5 md:gap-2">
                         <div className="w-4 h-4 md:w-5 md:h-5 rounded-md bg-red-50 overflow-hidden border border-red-100 shrink-0">
-                          <img src={v.ChannelAvatar} className="w-full h-full object-cover" alt="avatar" />
+                          <img src={v.ChannelName} className="w-full h-full object-cover" alt="avatar" />
                         </div>
                         <p className="text-[10px] md:text-[11px] text-red-900/60 font-black uppercase tracking-wider truncate">{v.ChannelName}</p>
                       </div>
@@ -485,14 +551,14 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
           );
         })}
 
-        {(hasMore || isExpanded) && (
+        {(hasMore || isExpanded) && !selectedDateFilter && (
           <div className="pt-10 flex justify-center">
             <button 
               onClick={() => {
                 if (hasMore) setVisibleGroupsCount(prev => prev + 10);
                 else setVisibleGroupsCount(3);
               }}
-              className="group flex items-center justify-center gap-3 bg-red-600 hover:bg-red-700 text-white px-10 py-4 md:py-5 rounded-2xl md:rounded-[1.5rem] font-black text-xs md:text-sm uppercase tracking-[0.2em] shadow-xl shadow-red-900/10 transition-all duration-300 active:scale-95 hover:shadow-red-900/20"
+              className="group flex items-center justify-center gap-3 bg-red-600 hover:bg-red-700 text-white px-10 py-4 md:py-5 rounded-2xl md:rounded-[1.5rem] font-black text-[11px] md:text-xs uppercase tracking-[0.2em] shadow-xl shadow-red-900/10 transition-all duration-300 active:scale-95 hover:shadow-red-900/20"
             >
               {!hasMore ? (
                 <>
@@ -630,6 +696,8 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
           canPrev={currentMonthIdx > 0}
           canNext={currentMonthIdx < availableMonths.length - 1}
           t={t}
+          selectedDate={selectedDateFilter}
+          onDateClick={handleHeatmapDateClick}
         />
       )}
 
@@ -655,7 +723,7 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
           isOpen={!!selectedDayVideos}
           onClose={() => setSelectedDayVideos(null)}
           videos={selectedDayVideos.videos}
-          title={selectedDayVideos.videos.length === 1 ? '作品详情' : `${selectedDayVideos.date} 作品集`}
+          title={selectedDayVideos.videos.length === 1 ? '作品详情' : `2026年${selectedDayVideos.date} 作品集`}
           t={t}
         />
       )}
