@@ -12,16 +12,16 @@ interface Props {
   t: Translations;
 }
 
-const DescriptionText: React.FC<{ text: string; t: Translations }> = ({ text, t }) => {
+const DescriptionText: React.FC<{ text: string; t: Translations; isSingle: boolean }> = ({ text, t, isSingle }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   
   if (!text) return null;
 
-  const shouldShowToggle = text.length > 80;
+  const shouldShowToggle = !isSingle && text.length > 80;
 
   return (
     <div className="mt-2">
-      <p className={`text-[13px] md:text-[13px] text-red-900/70 font-medium leading-relaxed max-w-4xl whitespace-pre-wrap break-words transition-all duration-500 ${!isExpanded ? 'line-clamp-2' : ''}`}>
+      <p className={`text-[13px] md:text-[13px] text-red-900/70 font-medium leading-relaxed max-w-4xl whitespace-pre-wrap break-words transition-all duration-500 ${(!isSingle && !isExpanded) ? 'line-clamp-2' : ''}`}>
         {text}
       </p>
       {shouldShowToggle && (
@@ -58,41 +58,46 @@ export const VideoModal: React.FC<Props> = ({ isOpen, onClose, videos, title, t 
 
   if (!isOpen) return null;
 
+  const isSingle = videos.length === 1;
+
   return createPortal(
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 md:p-12 lg:p-16 bg-red-950/25 backdrop-blur-xl animate-in fade-in duration-500">
-      <div className="bg-[#fffbf2] border border-red-100 rounded-[2rem] md:rounded-[4rem] w-full max-w-7xl h-[85vh] overflow-hidden flex flex-col shadow-[0_40px_100px_-20px_rgba(220,38,38,0.25)] animate-in zoom-in-95 duration-500">
+    <div className="fixed inset-0 z-[110] flex flex-col items-center justify-end pt-12 md:pt-20 bg-red-950/25 backdrop-blur-xl animate-in fade-in duration-500">
+      {/* Clickable area above the modal to close */}
+      <div className="absolute inset-0 z-0" onClick={onClose}></div>
+      
+      <div className="relative z-10 bg-[#fffbf2] border-t border-x border-red-100 rounded-t-[2rem] md:rounded-t-[4rem] w-full max-w-7xl h-full overflow-hidden flex flex-col shadow-[0_-10px_60px_-15px_rgba(220,38,38,0.3)] animate-in slide-in-from-bottom-full duration-700 ease-out">
         
         {/* Header */}
-        <div className="px-5 py-4 md:px-10 lg:px-14 md:py-8 border-b border-red-50 flex justify-between items-center bg-white/60 sticky top-0 z-20">
+        <div className="px-5 py-4 md:px-10 md:py-8 border-b border-red-50 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-20">
           <div className="min-w-0 flex-1 pr-4">
-            <h2 className="text-xl md:text-4xl font-black font-cny text-red-950 tracking-tighter truncate leading-tight">{title}</h2>
-            <div className="flex items-center gap-2 mt-1 md:mt-2">
+            <h2 className="text-xl md:text-3xl font-black font-cny text-red-950 tracking-tighter truncate leading-tight">{title}</h2>
+            <div className="flex items-center gap-2 mt-1">
               <span className="w-4 md:w-6 h-0.5 bg-red-600 shrink-0"></span>
-              <p className="text-red-900/40 text-[10px] md:text-[10px] font-black uppercase tracking-[0.1em] md:tracking-[0.3em] truncate">
-                 新年歌作品看板 • Performance Detail
+              <p className="text-red-900/40 text-[9px] md:text-[10px] font-black uppercase tracking-[0.1em] md:tracking-[0.2em] truncate">
+                 作品看板 • Performance Detail
               </p>
             </div>
           </div>
           <button 
             onClick={onClose}
-            className="p-2.5 md:p-3 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white rounded-xl md:rounded-[1.5rem] transition-all duration-500 shadow-sm border border-red-100 shrink-0 active:scale-90"
+            className="p-2.5 md:p-4 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white rounded-xl md:rounded-[1.5rem] transition-all duration-500 shadow-sm border border-red-100 shrink-0 active:scale-90"
           >
-            <X size={18} className="md:w-6 md:h-6" />
+            <X size={20} className="md:w-7 md:h-7" />
           </button>
         </div>
         
         {/* List of Videos */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-10 lg:p-14 space-y-8 md:space-y-12 bg-paper/30">
+        <div className="flex-1 overflow-y-auto p-4 md:p-12 space-y-8 md:space-y-16 bg-paper/30 custom-scrollbar pb-20">
           {videos.map((video, idx) => {
             const videoId = getYouTubeId(video.VideoURL);
             const isPlaying = playingVideoId === videoId;
             const formattedDate = formatDate(video.PublishDate);
 
             return (
-              <div key={idx} className="flex flex-col gap-6 md:gap-8 bg-white rounded-[1.8rem] md:rounded-[3.5rem] p-5 sm:p-6 md:p-10 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-700 group">
+              <div key={idx} className="flex flex-col gap-6 md:gap-12 bg-white rounded-[1.5rem] md:rounded-[3.5rem] p-5 md:p-12 border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-red-900/5 transition-all duration-700 group">
                 
                 {/* Player Area */}
-                <div className="w-full relative aspect-video rounded-[1.2rem] md:rounded-[2.5rem] overflow-hidden bg-gray-950 shadow-2xl border-2 md:border-4 border-white">
+                <div className="w-full relative aspect-video rounded-[1.2rem] md:rounded-[3rem] overflow-hidden bg-gray-950 shadow-2xl border-2 md:border-4 border-white">
                   {isPlaying && videoId ? (
                     <iframe
                       width="100%"
@@ -112,8 +117,8 @@ export const VideoModal: React.FC<Props> = ({ isOpen, onClose, videos, title, t 
                         className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-105 opacity-95"
                       />
                       <div className="absolute inset-0 flex items-center justify-center bg-black/10 transition-all hover:bg-black/20">
-                        <div className="bg-red-600 p-5 md:p-7 rounded-full text-white shadow-2xl transform transition-all duration-500 group-hover:scale-110 active:scale-95">
-                          <Play size={24} className="md:w-10 md:h-10" fill="currentColor" />
+                        <div className="bg-red-600 p-5 md:p-10 rounded-full text-white shadow-2xl transform transition-all duration-500 group-hover:scale-110 active:scale-95">
+                          <Play size={24} className="md:w-12 md:h-12" fill="currentColor" />
                         </div>
                       </div>
                     </div>
@@ -121,7 +126,7 @@ export const VideoModal: React.FC<Props> = ({ isOpen, onClose, videos, title, t 
                 </div>
                 
                 {/* Details Area */}
-                <div className="flex flex-col gap-5 md:gap-6 px-0.5">
+                <div className="flex flex-col gap-5 md:gap-10 px-1">
                   <div className="w-full">
                     <a 
                       href={video.VideoURL} 
@@ -129,79 +134,69 @@ export const VideoModal: React.FC<Props> = ({ isOpen, onClose, videos, title, t 
                       rel="noopener noreferrer" 
                       className="group/title inline-block max-w-full"
                     >
-                      <h3 className="text-lg md:text-3xl font-black text-red-950 leading-tight tracking-tight hover:text-red-600 transition-colors duration-300 flex items-center gap-2 group/title">
+                      <h3 className="text-xl md:text-4xl font-black text-red-950 leading-tight tracking-tight hover:text-red-600 transition-colors duration-300 flex items-center gap-2 group/title">
                         <span className="flex-1 min-w-0 break-words line-clamp-2 md:line-clamp-none">{video.VideoTitle}</span>
-                        <ExternalLink size={16} className="opacity-0 group-hover/title:opacity-100 translate-y-1 group-hover/title:translate-y-0 transition-all duration-300 text-red-600 shrink-0 hidden md:block" />
+                        <ExternalLink size={20} className="opacity-0 group-hover/title:opacity-100 translate-y-1 group-hover/title:translate-y-0 transition-all duration-300 text-red-600 shrink-0 hidden md:block" />
                       </h3>
                     </a>
                   </div>
 
                   {/* Stats Chips */}
-                  <div className="flex flex-wrap gap-2 md:gap-3 items-center w-full">
-                    <div className="flex items-center gap-1.5 md:gap-2 bg-red-50 px-2.5 md:px-3 py-1.5 md:py-2 rounded-lg md:rounded-xl text-red-900 border border-red-100 shadow-sm">
-                      <Eye size={12} className="text-red-600 shrink-0 md:size-4" />
-                      <span className="text-xs md:text-xs font-black tabular-nums">
-                        {video.Views.toLocaleString()} <span className="text-[10px] md:text-[10px] opacity-40 ml-0.5 uppercase tracking-tighter">Views</span>
+                  <div className="flex flex-wrap gap-2.5 md:gap-5 items-center w-full">
+                    <div className="flex items-center gap-2 md:gap-4 bg-red-50 px-3 md:px-5 py-2 md:py-3.5 rounded-xl md:rounded-[1.5rem] text-red-900 border border-red-100 shadow-sm">
+                      <Eye size={14} className="text-red-600 shrink-0 md:size-6" />
+                      <span className="text-xs md:text-lg font-black tabular-nums">
+                        {video.Views.toLocaleString()} <span className="text-[10px] md:text-xs opacity-40 ml-1 uppercase tracking-tighter">Views</span>
                       </span>
                     </div>
-                    <div className="flex items-center gap-1.5 md:gap-2 bg-red-50 px-2.5 md:px-3 py-1.5 md:py-2 rounded-lg md:rounded-xl text-red-900 border border-red-100 shadow-sm">
-                      <Heart size={12} className="text-red-500 shrink-0 md:size-4" />
-                      <span className="text-xs md:text-xs font-black tabular-nums">
-                        {video.Likes.toLocaleString()} <span className="text-[10px] md:text-[10px] opacity-40 ml-0.5 uppercase tracking-tighter">Likes</span>
+                    <div className="flex items-center gap-2 md:gap-4 bg-red-50 px-3 md:px-5 py-2 md:py-3.5 rounded-xl md:rounded-[1.5rem] text-red-900 border border-red-100 shadow-sm">
+                      <Heart size={14} className="text-red-500 shrink-0 md:size-6" />
+                      <span className="text-xs md:text-lg font-black tabular-nums">
+                        {video.Likes.toLocaleString()} <span className="text-[10px] md:text-xs opacity-40 ml-1 uppercase tracking-tighter">Likes</span>
                       </span>
                     </div>
-                    <div className="flex items-center gap-1.5 md:gap-2 bg-red-50 px-2.5 md:px-3 py-1.5 md:py-2 rounded-lg md:rounded-xl text-red-900 border border-red-100 shadow-sm">
-                      <MessageSquare size={12} className="text-amber-700 shrink-0 md:size-4" />
-                      <span className="text-xs md:text-xs font-black tabular-nums">
-                        {video.Comments.toLocaleString()} <span className="text-[10px] md:text-[10px] opacity-40 ml-0.5 uppercase tracking-tighter">Comments</span>
+                    <div className="flex items-center gap-2 md:gap-4 bg-red-50 px-3 md:px-5 py-2 md:py-3.5 rounded-xl md:rounded-[1.5rem] text-red-900 border border-red-100 shadow-sm">
+                      <MessageSquare size={14} className="text-amber-700 shrink-0 md:size-6" />
+                      <span className="text-xs md:text-lg font-black tabular-nums">
+                        {video.Comments.toLocaleString()} <span className="text-[10px] md:text-xs opacity-40 ml-1 uppercase tracking-tighter">Comments</span>
+                      </span>
+                    </div>
+
+                    <div className="relative group/tooltip flex items-center gap-2 md:gap-4 bg-amber-50 px-3 md:px-5 py-2 md:py-3.5 rounded-xl md:rounded-[1.5rem] text-amber-900 border border-amber-100 shadow-sm cursor-help">
+                      <Trophy size={14} className="text-amber-600 shrink-0 md:size-6" />
+                      <span className="text-xs md:text-lg font-black tabular-nums">
+                        #{video.ViewRank} <span className="text-[10px] md:text-xs opacity-40 ml-1 uppercase tracking-tighter">Total Rank</span>
                       </span>
                     </div>
 
-                    <div className="relative group/tooltip flex items-center gap-1.5 md:gap-2 bg-amber-50 px-2.5 md:px-3 py-1.5 md:py-2 rounded-lg md:rounded-xl text-amber-900 border border-amber-100 shadow-sm cursor-help">
-                      <Trophy size={12} className="text-amber-600 shrink-0 md:size-4" />
-                      <span className="text-xs md:text-xs font-black tabular-nums">
-                        #{video.ViewRank} <span className="text-[10px] md:text-[10px] opacity-40 ml-0.5 uppercase tracking-tighter">Total Views Rank</span>
+                    <div className="relative group/tooltip flex items-center gap-2 md:gap-4 bg-orange-50 px-3 md:px-5 py-2 md:py-3.5 rounded-xl md:rounded-[1.5rem] text-orange-900 border border-orange-100 shadow-sm cursor-help">
+                      <TrendingUp size={14} className="text-orange-600 shrink-0 md:size-6" />
+                      <span className="text-xs md:text-lg font-black tabular-nums">
+                        #{video.TrendingRank} <span className="text-[10px] md:text-xs opacity-40 ml-1 uppercase tracking-tighter">Daily Rank</span>
                       </span>
-                      {/* Tooltip Content */}
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-3 py-2 bg-gray-900 text-white text-[10px] font-bold rounded-xl opacity-0 group-hover/tooltip:opacity-100 pointer-events-none transition-all duration-300 translate-y-2 group-hover/tooltip:translate-y-0 whitespace-nowrap z-30 shadow-2xl border border-white/10">
-                        基于 YouTube 累计总播放量的全马排名
-                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-gray-900"></div>
-                      </div>
-                    </div>
-
-                    <div className="relative group/tooltip flex items-center gap-1.5 md:gap-2 bg-orange-50 px-2.5 md:px-3 py-1.5 md:py-2 rounded-lg md:rounded-xl text-orange-900 border border-orange-100 shadow-sm cursor-help">
-                      <TrendingUp size={12} className="text-orange-600 shrink-0 md:size-4" />
-                      <span className="text-xs md:text-xs font-black tabular-nums">
-                        #{video.TrendingRank} <span className="text-[10px] md:text-[10px] opacity-40 ml-0.5 uppercase tracking-tighter">Daily Views Rank</span>
-                      </span>
-                      {/* Tooltip Content */}
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-3 py-2 bg-gray-900 text-white text-[10px] font-bold rounded-xl opacity-0 group-hover/tooltip:opacity-100 pointer-events-none transition-all duration-300 translate-y-2 group-hover/tooltip:translate-y-0 whitespace-nowrap z-30 shadow-2xl border border-white/10">
-                        基于近期每日观看增量的实时人气排名
-                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-gray-900"></div>
-                      </div>
                     </div>
                   </div>
 
                   {/* Channel & Description */}
-                  <div className="flex items-start gap-4 md:gap-5 w-full pt-2">
-                    <div className="p-0.5 bg-gradient-to-br from-red-600 to-amber-500 rounded-lg md:rounded-2xl shadow-lg shrink-0 group-hover:rotate-3 transition-transform duration-500">
+                  <div className="flex items-start gap-4 md:gap-10 w-full pt-4">
+                    <div className="p-0.5 bg-gradient-to-br from-red-600 to-amber-500 rounded-xl md:rounded-[2rem] shadow-lg shrink-0 group-hover:rotate-3 transition-transform duration-500">
                       <img 
                         src={video.ChannelAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(video.ChannelName)}&background=random`} 
                         alt={video.ChannelName}
-                        className="w-10 h-10 md:w-14 md:h-14 rounded-[0.5rem] md:rounded-[1rem] border-2 border-white object-cover"
+                        className="w-12 h-12 md:w-24 md:h-24 rounded-[0.8rem] md:rounded-[1.8rem] border-2 border-white object-cover"
                       />
                     </div>
                     <div className="flex flex-col min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-1.5 md:mb-1.5">
-                        <span className="text-xs md:text-xs font-black text-red-900 uppercase tracking-widest leading-none truncate">{video.ChannelName}</span>
-                        <div className="flex items-center gap-1.5 bg-red-50/80 px-2 py-0.5 rounded md:rounded-md border border-red-100/50">
-                          <Calendar size={10} className="text-red-600 md:size-3" />
-                          <span className="text-[10px] md:text-[10px] font-bold text-red-900/60 uppercase tracking-tighter whitespace-nowrap">
+                      <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mb-2">
+                        <span className="text-sm md:text-2xl font-black text-red-950 uppercase tracking-widest leading-none truncate">{video.ChannelName}</span>
+                        <div className="flex items-center gap-2 bg-red-50/80 px-3 py-1.5 rounded-xl border border-red-100/50">
+                          <Calendar size={12} className="text-red-600 md:size-5" />
+                          <span className="text-[10px] md:text-sm font-bold text-red-900/60 uppercase tracking-tighter whitespace-nowrap">
                             {t.publishedOn} {formattedDate}
                           </span>
                         </div>
                       </div>
-                      <DescriptionText text={video.VideoDescription} t={t} />
+                      <DescriptionText text={video.VideoDescription} t={t} isSingle={isSingle} />
                     </div>
                   </div>
                 </div>
