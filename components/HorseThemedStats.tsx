@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { VideoData, Translations } from '../types';
-import { Sparkles, PieChart, Activity, PlayCircle, X, Play, ChevronDown, ChevronUp, Eye, Heart, Calendar, ArrowDownWideNarrow } from 'lucide-react';
+import { Sparkles, PieChart, Activity, PlayCircle, X, Play, ChevronDown, ChevronUp, Eye, Heart, Calendar, ArrowDownWideNarrow, ArrowUpWideNarrow } from 'lucide-react';
 import { VideoModal } from './VideoModal';
 import { TRANSLATIONS } from '../constants';
 
@@ -44,6 +44,7 @@ const HighlightText: React.FC<{ text: string; highlights: string[] }> = ({ text,
 };
 
 type SortOption = 'views' | 'likes' | 'date';
+type SortOrder = 'asc' | 'desc';
 
 export const HorseThemedStats: React.FC<Props> = ({ videos, onModalToggle }) => {
   const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null);
@@ -52,6 +53,7 @@ export const HorseThemedStats: React.FC<Props> = ({ videos, onModalToggle }) => 
   const [hoveredPart, setHoveredPart] = useState<'pun' | 'other' | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [sortBy, setSortBy] = useState<SortOption>('views');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   const containerRef = useRef<HTMLDivElement>(null);
   
   const t = TRANSLATIONS;
@@ -102,11 +104,14 @@ export const HorseThemedStats: React.FC<Props> = ({ videos, onModalToggle }) => 
   const sortedVideoDetails = useMemo(() => {
     if (!selectedStat) return [];
     return [...selectedStat.videoDetails].sort((a, b) => {
-      if (sortBy === 'views') return b.Views - a.Views;
-      if (sortBy === 'likes') return b.Likes - a.Likes;
-      return new Date(b.PublishDate).getTime() - new Date(a.PublishDate).getTime();
+      let comparison = 0;
+      if (sortBy === 'views') comparison = b.Views - a.Views;
+      else if (sortBy === 'likes') comparison = b.Likes - a.Likes;
+      else comparison = new Date(b.PublishDate).getTime() - new Date(a.PublishDate).getTime();
+      
+      return sortOrder === 'desc' ? comparison : -comparison;
     });
-  }, [selectedStat, sortBy]);
+  }, [selectedStat, sortBy, sortOrder]);
 
   const totalVideos = videos.length;
   const punVideoCount = videos.filter(v => {
@@ -132,12 +137,26 @@ export const HorseThemedStats: React.FC<Props> = ({ videos, onModalToggle }) => 
   const punStrokeDash = (punVideoCount / totalVideos) * circumference;
   const otherStrokeDash = circumference - punStrokeDash;
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
     if (containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
+      let clientX, clientY;
+      
+      if ('touches' in e) {
+        if (e.touches.length > 0) {
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+        } else {
+          return;
+        }
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+
       setMousePos({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
+        x: clientX - rect.left,
+        y: clientY - rect.top
       });
     }
   };
@@ -190,6 +209,10 @@ export const HorseThemedStats: React.FC<Props> = ({ videos, onModalToggle }) => 
     );
   };
 
+  // Side switching logic for tooltip
+  const isRightSide = containerRef.current && mousePos.x > containerRef.current.offsetWidth / 2;
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
   return (
     <div className="w-full">
       <div className="mb-10 md:mb-16 flex flex-col items-center justify-center text-center">
@@ -212,25 +235,39 @@ export const HorseThemedStats: React.FC<Props> = ({ videos, onModalToggle }) => 
           {/* Donut Chart Section */}
           <div 
             className="w-full flex flex-col items-center justify-center relative select-none py-4"
-            onMouseMove={handleMouseMove}
+            onMouseMove={handleInteraction}
+            onTouchMove={handleInteraction}
+            onTouchStart={handleInteraction}
             ref={containerRef}
           >
+            {/* Improved Side Tooltip: Switch sides and handle mobile finger offset */}
             <div 
-              className={`absolute z-[70] transition-opacity duration-200 pointer-events-none transform -translate-x-1/2 -translate-y-[120%] ${hoveredPart ? 'opacity-100' : 'opacity-0'}`}
-              style={{ left: mousePos.x, top: mousePos.y }}
+              className={`absolute z-[70] transition-opacity duration-200 pointer-events-none ${hoveredPart ? 'opacity-100' : 'opacity-0'}`}
+              style={{ 
+                left: mousePos.x, 
+                top: mousePos.y,
+                transform: isRightSide
+                  ? `translate(calc(-100% - ${isMobile ? '35px' : '20px'}), -50%)`
+                  : `translate(${isMobile ? '35px' : '20px'}, -50%)`,
+                marginTop: isMobile ? '-15px' : '0'
+              }}
             >
               {hoveredPart === 'pun' && (
                 <div className="bg-gradient-to-br from-red-600 to-amber-500 text-white px-5 py-3 rounded-2xl shadow-2xl border border-white/20 whitespace-nowrap">
                   <p className="text-[10px] font-black uppercase tracking-widest opacity-80 mb-0.5 text-center">使用“马”</p>
-                  <p className="text-2xl font-black leading-none text-center">{punVideoCount} <span className="text-xs font-bold opacity-60">首</span></p>
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-amber-500"></div>
+                  <p className="text-xl md:text-2xl font-black leading-none text-center">{punVideoCount} <span className="text-xs font-bold opacity-60">首</span></p>
+                  <div className={`absolute top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent 
+                    ${isRightSide ? 'left-full border-l-[6px] border-l-amber-500' : 'right-full border-r-[6px] border-r-amber-500'}`}
+                  ></div>
                 </div>
               )}
               {hoveredPart === 'other' && (
                 <div className="bg-gray-800 text-white px-5 py-3 rounded-2xl shadow-2xl border border-white/10 whitespace-nowrap">
                   <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-0.5 text-center">其他作品</p>
-                  <p className="text-2xl font-black leading-none text-center">{otherVideoCount} <span className="text-xs font-bold opacity-40">首</span></p>
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-gray-800"></div>
+                  <p className="text-xl md:text-2xl font-black leading-none text-center">{otherVideoCount} <span className="text-xs font-bold opacity-40">首</span></p>
+                  <div className={`absolute top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent 
+                    ${isRightSide ? 'left-full border-l-[6px] border-l-gray-800' : 'right-full border-r-[6px] border-r-gray-800'}`}
+                  ></div>
                 </div>
               )}
             </div>
@@ -246,6 +283,10 @@ export const HorseThemedStats: React.FC<Props> = ({ videos, onModalToggle }) => 
                 <circle
                   onMouseEnter={() => setHoveredPart('other')}
                   onMouseLeave={() => setHoveredPart(null)}
+                  onTouchStart={(e) => {
+                    handleInteraction(e);
+                    setHoveredPart('other');
+                  }}
                   stroke="currentColor"
                   fill="transparent"
                   strokeWidth={stroke}
@@ -264,6 +305,10 @@ export const HorseThemedStats: React.FC<Props> = ({ videos, onModalToggle }) => 
                 <circle
                   onMouseEnter={() => setHoveredPart('pun')}
                   onMouseLeave={() => setHoveredPart(null)}
+                  onTouchStart={(e) => {
+                    handleInteraction(e);
+                    setHoveredPart('pun');
+                  }}
                   stroke="url(#donutGradient)"
                   fill="transparent"
                   strokeWidth={stroke}
@@ -384,6 +429,15 @@ export const HorseThemedStats: React.FC<Props> = ({ videos, onModalToggle }) => 
                     >
                       <Calendar size={14} className="md:size-5" />
                       发布日期
+                    </button>
+
+                    <div className="w-px h-6 bg-gray-200 mx-2 hidden md:block"></div>
+
+                    <button 
+                      onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+                      className="flex items-center gap-2 px-4 py-2 md:px-5 md:py-2 rounded-lg bg-white border border-gray-100 text-red-600 hover:bg-red-50 transition-all shadow-sm active:scale-95"
+                    >
+                      {sortOrder === 'desc' ? <ArrowDownWideNarrow size={16} /> : <ArrowUpWideNarrow size={16} />}
                     </button>
                   </div>
                 </div>

@@ -131,12 +131,12 @@ const App: React.FC = () => {
   };
 
   const navItems = [
-    { id: 'metrics', label: '数据概览', sub: 'Metrics', icon: BarChart3 },
-    { id: 'ranking', label: '风云榜', sub: 'Ranking', icon: Trophy },
-    { id: 'peaks', label: '趋势分析', sub: 'Trends', icon: Flame },
-    { id: 'calendar', label: '发布日历', sub: 'Calendar', icon: Calendar },
-    { id: 'pun-stats', label: '谐音创意', sub: 'Creative', icon: Zap },
-    { id: 'hashtags', label: '热门标签', sub: 'Hashtags', icon: Hash }
+    { id: 'metrics', label: '数据概览', sub: 'Metrics Overview', icon: BarChart3 },
+    { id: 'ranking', label: '新年歌风云榜', sub: 'Leaderboard', icon: Trophy },
+    { id: 'peaks', label: '新年歌曲发布趋势', sub: 'Momentum Trends', icon: Flame },
+    { id: 'calendar', label: '新年歌曲发布日历', sub: 'Release Calendar', icon: Calendar },
+    { id: 'pun-stats', label: '标题用“马”关键词/谐音', sub: 'Creative Puns', icon: Zap },
+    { id: 'hashtags', label: '热门标签分析', sub: 'Hashtag Insights', icon: Hash }
   ];
 
   if (loading) {
@@ -185,62 +185,65 @@ const App: React.FC = () => {
       {/* Hamburger Menu Overlay */}
       <div className={`fixed inset-0 z-[100] transition-all duration-700 ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
         <div className="absolute inset-0 bg-red-950/40 backdrop-blur-2xl" onClick={() => setIsMenuOpen(false)}></div>
-        <div className={`absolute top-0 left-0 h-full w-full md:w-[380px] bg-white shadow-2xl transition-transform duration-700 ease-expo ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className={`absolute top-0 left-0 h-full w-full md:w-[420px] bg-white shadow-2xl transition-transform duration-700 ease-expo ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
           <div className="p-6 md:p-10 h-full flex flex-col">
-            <div className="flex justify-between items-center mb-8">
-              <div className="flex items-center gap-2.5">
-                <div className="bg-red-600 p-1.5 rounded-lg">
+            <div className="flex justify-between items-center mb-8 md:mb-10">
+              <div className="flex items-center gap-3">
+                <div className="bg-red-600 p-2 rounded-xl">
                   <Music className="text-white w-4 h-4" />
                 </div>
-                <span className="font-black text-red-950 text-[10px] uppercase tracking-widest">CNY 2026</span>
+                <div className="flex flex-col">
+                   <span className="font-black text-red-950 text-[10px] uppercase tracking-[0.2em] leading-none mb-1">Navigation</span>
+                   <span className="font-black text-red-900/30 text-[8px] uppercase tracking-[0.4em] leading-none">2026 CNY Explorer</span>
+                </div>
               </div>
               <button 
                 onClick={() => setIsMenuOpen(false)}
                 className="p-2.5 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white rounded-xl transition-all duration-500 active:scale-90 border border-red-100/50"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
             
-            <div className="mb-4 pl-1">
-              <h3 className="text-[9px] font-black text-red-900/30 uppercase tracking-[0.4em] mb-1.5">主菜单</h3>
-              <div className="h-0.5 w-8 bg-red-600/20 rounded-full"></div>
+            <div className="mb-4 pl-1 flex items-center gap-3">
+              <div className="h-0.5 w-8 bg-red-600 rounded-full"></div>
+              <h3 className="text-[9px] font-black text-red-900/40 uppercase tracking-[0.5em]">内容导航</h3>
             </div>
             
-            {/* Highly Compact Square 2-Column Grid Menu */}
-            <div className="grid grid-cols-2 gap-2 md:gap-3 flex-none content-start overflow-hidden">
+            {/* Vertical List Column Menu - Reduced heights and paddings */}
+            <div className="flex flex-col gap-2 md:gap-2.5 flex-none content-start overflow-y-auto custom-scrollbar pr-2 pb-6">
               {navItems.map((item, idx) => (
                 <button
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  style={{ transitionDelay: `${idx * 30}ms` }}
-                  className={`group relative aspect-square flex flex-col items-center justify-center p-2 rounded-[1.2rem] md:rounded-[1.8rem] bg-gray-50/60 border border-transparent hover:border-red-600/10 hover:bg-red-50/50 transition-all duration-500 text-center ${isMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}
+                  style={{ transitionDelay: `${idx * 40}ms` }}
+                  className={`group relative flex items-center gap-4 p-3 md:p-3.5 rounded-[1.2rem] md:rounded-[1.4rem] bg-gray-50/60 border border-transparent hover:border-red-600/10 hover:bg-red-50/50 transition-all duration-500 text-left w-full ${isMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'}`}
                 >
-                  <div className="mb-2 p-2 bg-white rounded-xl shadow-sm text-red-600 group-hover:text-red-700 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 border border-gray-100">
-                    <item.icon size={20} strokeWidth={2.5} className="md:w-6 md:h-6" />
+                  <div className="p-2.5 bg-white rounded-xl shadow-sm text-red-600 group-hover:text-red-700 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 border border-gray-100 shrink-0">
+                    <item.icon size={18} strokeWidth={2.5} className="md:w-5 md:h-5" />
                   </div>
-                  <div className="flex flex-col items-center">
-                    <span className="text-[11px] md:text-sm font-black text-red-950 tracking-tight leading-none mb-0.5">{item.label}</span>
-                    <span className="text-[6px] md:text-[8px] font-bold text-red-900/30 uppercase tracking-widest">{item.sub}</span>
+                  <div className="flex flex-col flex-1 min-w-0">
+                    <span className="text-[14px] md:text-[15px] font-black text-red-950 tracking-tight leading-tight mb-0.5 break-words">
+                      {item.label}
+                    </span>
+                    <span className="text-[8px] md:text-[9px] font-bold text-red-900/30 uppercase tracking-[0.2em]">
+                      {item.sub}
+                    </span>
                   </div>
-                  <span className="absolute top-2.5 right-2.5 text-[8px] font-black text-red-900/5 italic">
-                    {String(idx + 1).padStart(2, '0')}
-                  </span>
+                  <ChevronRight size={16} className="text-red-900/10 group-hover:text-red-600 transition-all group-hover:translate-x-1 shrink-0" />
                 </button>
               ))}
             </div>
             
             <div className="mt-auto pt-6 border-t border-red-50">
-               <div className="flex items-center justify-between">
-                 <div className="flex items-center gap-2 text-red-900/20">
-                    <Star size={8} fill="currentColor" />
-                    <span className="text-[8px] font-black uppercase tracking-widest leading-none">Spring Festival 2026</span>
-                 </div>
-                 <div className="flex items-center gap-1">
-                    {[1, 2, 3].map(i => (
-                      <div key={i} className="w-0.5 h-0.5 rounded-full bg-red-600/10"></div>
-                    ))}
-                 </div>
+               <div className="bg-red-50/50 p-4 md:p-5 rounded-2xl border border-red-100/50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Heart size={12} className="text-red-600" fill="currentColor" />
+                    <span className="text-[9px] font-black text-red-900/60 uppercase tracking-widest">Happy New Year</span>
+                  </div>
+                  <p className="text-[10px] text-red-900/40 font-medium leading-relaxed uppercase tracking-tight">
+                    记录并见证马来西亚新年歌曲的文化生命力
+                  </p>
                </div>
             </div>
           </div>

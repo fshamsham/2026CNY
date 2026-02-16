@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { VideoData, Translations } from '../types';
-import { Hash, Sparkles, PlayCircle, X, Play, MessageSquareQuote, ChevronDown, ChevronUp, Eye, Heart, Calendar, ArrowDownWideNarrow } from 'lucide-react';
+import { Hash, Sparkles, PlayCircle, X, Play, MessageSquareQuote, ChevronDown, ChevronUp, Eye, Heart, Calendar, ArrowDownWideNarrow, ArrowUpWideNarrow } from 'lucide-react';
 import { VideoModal } from './VideoModal';
 import { TRANSLATIONS } from '../constants';
 
@@ -23,12 +23,14 @@ const compactFormatter = new Intl.NumberFormat('en-US', {
 });
 
 type SortOption = 'views' | 'likes' | 'date';
+type SortOrder = 'asc' | 'desc';
 
 export const HashtagAnalysis: React.FC<Props> = ({ videos, onModalToggle }) => {
   const [selectedTag, setSelectedTag] = useState<HashtagStat | null>(null);
   const [detailedVideo, setDetailedVideo] = useState<VideoData | null>(null);
   const [showAllTags, setShowAllTags] = useState(false);
   const [sortBy, setSortBy] = useState<SortOption>('views');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   const t = TRANSLATIONS;
 
   useEffect(() => {
@@ -69,11 +71,14 @@ export const HashtagAnalysis: React.FC<Props> = ({ videos, onModalToggle }) => {
   const sortedVideos = useMemo(() => {
     if (!selectedTag) return [];
     return [...selectedTag.videos].sort((a, b) => {
-      if (sortBy === 'views') return b.Views - a.Views;
-      if (sortBy === 'likes') return b.Likes - a.Likes;
-      return new Date(b.PublishDate).getTime() - new Date(a.PublishDate).getTime();
+      let comparison = 0;
+      if (sortBy === 'views') comparison = b.Views - a.Views;
+      else if (sortBy === 'likes') comparison = b.Likes - a.Likes;
+      else comparison = new Date(b.PublishDate).getTime() - new Date(a.PublishDate).getTime();
+      
+      return sortOrder === 'desc' ? comparison : -comparison;
     });
-  }, [selectedTag, sortBy]);
+  }, [selectedTag, sortBy, sortOrder]);
 
   const hasRemaining = hashtagStats.length > (showAllTags ? 0 : visibleTags.length);
 
@@ -207,6 +212,15 @@ export const HashtagAnalysis: React.FC<Props> = ({ videos, onModalToggle }) => {
                       <Calendar size={14} className="md:size-5" />
                       发布日期
                     </button>
+
+                    <div className="w-px h-6 bg-gray-200 mx-2 hidden md:block"></div>
+
+                    <button 
+                      onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+                      className="flex items-center gap-2 px-4 py-2 md:px-5 md:py-2 rounded-lg bg-white border border-gray-100 text-red-600 hover:bg-red-50 transition-all shadow-sm active:scale-95"
+                    >
+                      {sortOrder === 'desc' ? <ArrowDownWideNarrow size={16} /> : <ArrowUpWideNarrow size={16} />}
+                    </button>
                   </div>
                 </div>
               )}
@@ -236,7 +250,7 @@ export const HashtagAnalysis: React.FC<Props> = ({ videos, onModalToggle }) => {
                       {v.VideoTitle}
                     </h5>
                     
-                    <div className="flex flex-col gap-2 md:gap-4">
+                    <div className="flex flex-col gap-2 md:gap-3">
                       <div className="flex items-center gap-3 md:gap-5">
                         <div className="w-6 h-6 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-red-50 overflow-hidden border border-red-100 shrink-0">
                           <img src={v.ChannelAvatar} className="w-full h-full object-cover" alt="avatar" />
