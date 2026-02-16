@@ -12,8 +12,8 @@ import { ReleasePeakStats } from './components/ReleasePeakStats';
 import { VideoModal } from './components/VideoModal';
 import { 
   Music, Sparkles, Star, AlertCircle, RefreshCw, 
-  ChevronUp, Mail, Heart, Compass, Send, 
-  Menu, X, Trophy, BarChart3, Calendar, Zap, Hash, Flame
+  ChevronUp, Mail, Heart, Send, 
+  Menu, X, Trophy, BarChart3, Calendar, Zap, Hash, Flame, ChevronRight
 } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -120,7 +120,7 @@ const App: React.FC = () => {
     setIsMenuOpen(false);
     const el = document.getElementById(id);
     if (el) {
-      const offset = 120;
+      const offset = 100;
       const elementPosition = el.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - offset;
       window.scrollTo({
@@ -131,12 +131,12 @@ const App: React.FC = () => {
   };
 
   const navItems = [
-    { id: 'metrics', label: '数据指标概览', icon: BarChart3 },
-    { id: 'ranking', label: '新年歌风云榜', icon: Trophy },
-    { id: 'peaks', label: '新年歌曲发布趋势', icon: Flame },
-    { id: 'calendar', label: '新年歌曲发布日历', icon: Calendar },
-    { id: 'pun-stats', label: '标题用“马”关键词/谐音', icon: Zap },
-    { id: 'hashtags', label: '热门标签分析', icon: Hash }
+    { id: 'metrics', label: '数据概览', sub: 'Metrics', icon: BarChart3 },
+    { id: 'ranking', label: '风云榜', sub: 'Ranking', icon: Trophy },
+    { id: 'peaks', label: '趋势分析', sub: 'Trends', icon: Flame },
+    { id: 'calendar', label: '发布日历', sub: 'Calendar', icon: Calendar },
+    { id: 'pun-stats', label: '谐音创意', sub: 'Creative', icon: Zap },
+    { id: 'hashtags', label: '热门标签', sub: 'Hashtags', icon: Hash }
   ];
 
   if (loading) {
@@ -185,45 +185,62 @@ const App: React.FC = () => {
       {/* Hamburger Menu Overlay */}
       <div className={`fixed inset-0 z-[100] transition-all duration-700 ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
         <div className="absolute inset-0 bg-red-950/40 backdrop-blur-2xl" onClick={() => setIsMenuOpen(false)}></div>
-        <div className={`absolute top-0 left-0 h-full w-full md:w-[450px] bg-white shadow-2xl transition-transform duration-700 ease-expo ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-          <div className="p-8 md:p-12 h-full flex flex-col">
-            <div className="flex justify-between items-center mb-16">
-              <div className="bg-red-600 p-2.5 rounded-xl">
-                <Music className="text-white w-5 h-5" />
+        <div className={`absolute top-0 left-0 h-full w-full md:w-[380px] bg-white shadow-2xl transition-transform duration-700 ease-expo ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+          <div className="p-6 md:p-10 h-full flex flex-col">
+            <div className="flex justify-between items-center mb-8">
+              <div className="flex items-center gap-2.5">
+                <div className="bg-red-600 p-1.5 rounded-lg">
+                  <Music className="text-white w-4 h-4" />
+                </div>
+                <span className="font-black text-red-950 text-[10px] uppercase tracking-widest">CNY 2026</span>
               </div>
               <button 
                 onClick={() => setIsMenuOpen(false)}
-                className="p-3 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white rounded-full transition-all duration-500 active:scale-90"
+                className="p-2.5 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white rounded-xl transition-all duration-500 active:scale-90 border border-red-100/50"
               >
-                <X size={24} />
+                <X size={20} />
               </button>
             </div>
             
-            <h3 className="text-[10px] font-black text-red-900/40 uppercase tracking-[0.6em] mb-10 pl-1">新春导览菜单</h3>
+            <div className="mb-4 pl-1">
+              <h3 className="text-[9px] font-black text-red-900/30 uppercase tracking-[0.4em] mb-1.5">主菜单</h3>
+              <div className="h-0.5 w-8 bg-red-600/20 rounded-full"></div>
+            </div>
             
-            <nav className="flex flex-col gap-4">
+            {/* Highly Compact Square 2-Column Grid Menu */}
+            <div className="grid grid-cols-2 gap-2 md:gap-3 flex-none content-start overflow-hidden">
               {navItems.map((item, idx) => (
                 <button
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  style={{ transitionDelay: `${idx * 50}ms` }}
-                  className={`group flex items-center justify-between p-6 rounded-[2rem] bg-gray-50/50 border border-transparent hover:border-red-100 hover:bg-red-50/30 transition-all duration-500 text-left ${isMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-12 opacity-0'}`}
+                  style={{ transitionDelay: `${idx * 30}ms` }}
+                  className={`group relative aspect-square flex flex-col items-center justify-center p-2 rounded-[1.2rem] md:rounded-[1.8rem] bg-gray-50/60 border border-transparent hover:border-red-600/10 hover:bg-red-50/50 transition-all duration-500 text-center ${isMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}
                 >
-                  <div className="flex items-center gap-5">
-                    <div className="bg-white p-3 rounded-2xl shadow-sm text-red-200 group-hover:text-red-600 transition-colors">
-                      <item.icon size={22} />
-                    </div>
-                    <span className="text-lg md:text-xl font-black text-red-950 tracking-tight">{item.label}</span>
+                  <div className="mb-2 p-2 bg-white rounded-xl shadow-sm text-red-600 group-hover:text-red-700 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 border border-gray-100">
+                    <item.icon size={20} strokeWidth={2.5} className="md:w-6 md:h-6" />
                   </div>
-                  <Sparkles size={16} className="text-amber-400 opacity-0 group-hover:opacity-100 transition-all transform scale-50 group-hover:scale-100" />
+                  <div className="flex flex-col items-center">
+                    <span className="text-[11px] md:text-sm font-black text-red-950 tracking-tight leading-none mb-0.5">{item.label}</span>
+                    <span className="text-[6px] md:text-[8px] font-bold text-red-900/30 uppercase tracking-widest">{item.sub}</span>
+                  </div>
+                  <span className="absolute top-2.5 right-2.5 text-[8px] font-black text-red-900/5 italic">
+                    {String(idx + 1).padStart(2, '0')}
+                  </span>
                 </button>
               ))}
-            </nav>
+            </div>
             
-            <div className="mt-auto pt-10 border-t border-red-50">
-               <div className="flex items-center gap-3 text-red-900/20">
-                  <Star size={14} fill="currentColor" />
-                  <span className="text-[10px] font-black uppercase tracking-widest leading-none">Gong Xi Fa Cai 2026</span>
+            <div className="mt-auto pt-6 border-t border-red-50">
+               <div className="flex items-center justify-between">
+                 <div className="flex items-center gap-2 text-red-900/20">
+                    <Star size={8} fill="currentColor" />
+                    <span className="text-[8px] font-black uppercase tracking-widest leading-none">Spring Festival 2026</span>
+                 </div>
+                 <div className="flex items-center gap-1">
+                    {[1, 2, 3].map(i => (
+                      <div key={i} className="w-0.5 h-0.5 rounded-full bg-red-600/10"></div>
+                    ))}
+                 </div>
                </div>
             </div>
           </div>
@@ -236,7 +253,7 @@ const App: React.FC = () => {
             {/* Hamburger Button */}
             <button 
                 onClick={() => setIsMenuOpen(true)}
-                className="group flex items-center justify-center bg-red-50 hover:bg-red-600 text-red-600 hover:text-white p-3.5 md:p-5 rounded-2xl md:rounded-3xl transition-all duration-300 active:scale-95 shadow-sm"
+                className="group flex items-center justify-center bg-red-50 hover:bg-red-600 text-red-600 hover:text-white p-3.5 md:p-5 rounded-2xl md:rounded-3xl transition-all duration-300 active:scale-95 shadow-sm border border-red-100/50"
                 aria-label="Open Menu"
              >
                 <Menu size={20} className="md:w-7 md:h-7" />

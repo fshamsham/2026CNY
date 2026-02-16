@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { VideoData, Translations } from '../types';
 import { Calendar, Zap, ChevronRight, Play, Flame, ChevronDown, ChevronUp, Trophy, Activity } from 'lucide-react';
@@ -119,18 +118,18 @@ const DayRow: React.FC<{
       className={`group/btn flex items-center justify-center transition-all duration-500 shadow-sm active:scale-95 shrink-0
         ${mobile 
           ? `w-10 h-10 rounded-full border ${isZenith ? 'bg-white/10 text-white border-white/20' : 'bg-white text-red-600 border-gray-100 shadow-lg shadow-red-900/5'}`
-          : `px-5 py-2.5 rounded-full border ${isZenith ? 'bg-white/5 backdrop-blur-md hover:bg-white text-white/70 hover:text-red-950 border-white/10 hover:border-white' : 'bg-white hover:bg-red-50 text-red-900/40 hover:text-red-600 border-gray-100 hover:border-red-600/20'}`
+          : `px-5 py-2.5 rounded-full border ${isZenith ? 'bg-white/5 backdrop-blur-md md:hover:bg-white text-white/70 md:hover:text-red-950 border-white/10 md:hover:border-white' : 'bg-white md:hover:bg-red-50 text-red-900/40 md:hover:text-red-600 border-gray-100 md:hover:border-red-600/20'}`
         }`}
     >
       {!mobile && <span className="text-[11px] md:text-[13px] font-black uppercase tracking-[0.2em] whitespace-nowrap mr-2">查看更多</span>}
-      <ChevronRight size={mobile ? 18 : 14} className="transition-transform group-hover/btn:translate-x-0.5" />
+      <ChevronRight size={mobile ? 18 : 14} className="transition-transform md:group-hover/btn:translate-x-0.5" />
     </button>
   );
 
   return (
     <div 
       onClick={() => onDateClick?.(formattedFullDate, day.videos)}
-      className={`flex flex-col md:flex-row gap-4 md:gap-8 items-stretch md:items-center py-6 border-b last:border-0 group/day-row cursor-pointer hover:bg-red-50/10 transition-colors ${isZenith ? 'border-white/5' : 'border-red-50/50'}`}
+      className={`flex flex-col md:flex-row gap-4 md:gap-8 items-stretch md:items-center py-6 border-b last:border-0 group/day-row cursor-pointer md:hover:bg-red-50/10 active:bg-red-50/20 transition-colors ${isZenith ? 'border-white/5' : 'border-red-50/50'}`}
     >
       <div className="flex items-center justify-between md:flex-col md:items-start md:justify-start gap-3 shrink-0 md:min-w-[120px] px-1">
         <div className="flex flex-row md:flex-col items-center md:items-start gap-3 md:gap-2">
@@ -171,22 +170,22 @@ const DayRow: React.FC<{
                   onDateClick?.(`${formattedFullDate} - ${chan.name}`, chan.videos);
                 }}
               >
-                <div className="relative w-full h-24 md:h-36 overflow-hidden rounded-[1rem] md:rounded-[1.2rem] shadow-md border group-hover/chan:shadow-xl transition-shadow duration-500 bg-gray-100">
+                <div className="relative w-full h-24 md:h-36 overflow-hidden rounded-[1rem] md:rounded-[1.2rem] shadow-md border md:group-hover/chan:shadow-xl transition-shadow duration-500 bg-gray-100">
                   <div className={`w-full h-full relative ${isZenith ? 'border-white/10' : 'border-red-900/5'}`}>
                     <img 
                       src={v.Thumbnail} 
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/chan:scale-105" 
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 md:group-hover/chan:scale-105" 
                       alt="" 
                     />
-                    <div className={`absolute inset-0 transition-colors ${isZenith ? 'bg-red-950/20 group-hover/chan:bg-transparent' : 'bg-black/5 group-hover/chan:bg-transparent'}`}></div>
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/chan:opacity-100 transition-opacity">
-                      <div className="bg-red-900 p-2 md:p-3 rounded-full shadow-2xl transform scale-75 group-hover/chan:scale-100 transition-transform">
+                    <div className={`absolute inset-0 transition-colors ${isZenith ? 'bg-red-950/20 md:group-hover/chan:bg-transparent' : 'bg-black/5 md:group-hover/chan:bg-transparent'}`}></div>
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 md:group-hover/chan:opacity-100 transition-opacity">
+                      <div className="bg-red-900 p-2 md:p-3 rounded-full shadow-2xl transform scale-75 md:group-hover/chan:scale-100 transition-transform">
                         <Play size={20} fill="currentColor" className="text-white" />
                       </div>
                     </div>
                   </div>
                   {hasMultipleVids && (
-                    <div className="absolute top-1.5 right-1.5 z-[55] bg-white text-red-950 text-[10px] md:text-[11px] font-black px-2 py-0.5 rounded-full shadow-xl border border-red-900/10 transform group-hover/chan:scale-110 transition-transform">
+                    <div className="absolute top-1.5 right-1.5 z-[55] bg-white text-red-950 text-[10px] md:text-[11px] font-black px-2 py-0.5 rounded-full shadow-xl border border-red-900/10 transform md:group-hover/chan:scale-110 transition-transform">
                       {chan.videos.length}
                     </div>
                   )}
@@ -195,11 +194,11 @@ const DayRow: React.FC<{
                 <div className="flex items-center gap-3 px-1">
                   <img 
                     src={chan.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(chan.name)}&background=random`} 
-                    className={`w-6 h-6 md:w-8 md:h-8 rounded-lg object-cover border shadow-sm group-hover/chan:border-red-400 transition-colors ${isZenith ? 'border-white/10' : 'border-red-100'}`} 
+                    className={`w-6 h-6 md:w-8 md:h-8 rounded-lg object-cover border shadow-sm md:group-hover/chan:border-red-400 transition-colors ${isZenith ? 'border-white/10' : 'border-red-100'}`} 
                     alt={chan.name} 
                   />
                   <div className="min-w-0">
-                    <h6 className={`font-black text-[10px] md:text-xs truncate uppercase tracking-tight transition-colors ${isZenith ? 'text-white/70 group-hover/chan:text-white' : 'text-red-950/60 group-hover/chan:text-red-600'}`}>
+                    <h6 className={`font-black text-[10px] md:text-xs truncate uppercase tracking-tight transition-colors ${isZenith ? 'text-white/70 md:group-hover/chan:text-white' : 'text-red-950/60 md:group-hover/chan:text-red-600'}`}>
                       {chan.name}
                     </h6>
                   </div>
@@ -281,8 +280,8 @@ const PeakDayCard: React.FC<{
 
       <div 
         onClick={() => setIsExpanded(!isExpanded)}
-        className={`relative z-10 p-5 md:p-8 flex items-center justify-between gap-4 transition-colors cursor-pointer group/header
-          ${isZenith ? 'hover:bg-red-950/40' : 'hover:bg-red-50/20'}`}
+        className={`relative z-10 p-5 md:p-8 flex items-center justify-between gap-4 transition-all cursor-pointer group/header active:scale-[0.99] active:opacity-90
+          ${isZenith ? 'md:hover:bg-red-950/40' : 'md:hover:bg-red-50/20'}`}
       >
         <div className="flex items-center gap-5 md:gap-8">
           <div className="relative">
@@ -313,13 +312,13 @@ const PeakDayCard: React.FC<{
               </p>
               
               {!isExpanded && (
-                <div className="flex flex-wrap gap-1">
+                <div className="flex flex-wrap gap-1.5 md:gap-2">
                   {dateTags.map((tag, i) => (
                     <span 
                       key={i} 
-                      className={`text-[8px] md:text-[9px] font-black tabular-nums px-1.5 py-0.5 rounded-md border 
+                      className={`text-[12px] md:text-[14px] font-black tabular-nums px-3 py-1 rounded-lg border 
                         ${isZenith 
-                          ? 'bg-white/10 text-white border-white/10' 
+                          ? 'bg-white/10 text-white border-white/20' 
                           : 'bg-red-50 text-red-700 border-red-100'}`}
                     >
                       {tag}
@@ -332,7 +331,7 @@ const PeakDayCard: React.FC<{
         </div>
         
         <div className={`p-1.5 md:p-2 rounded-full transition-all duration-300
-          ${isZenith ? 'bg-white/5 text-white/40 group-hover/header:bg-white/10 group-hover/header:text-white' : 'bg-red-50 text-red-900/20 group-hover/header:bg-red-100 group-hover/header:text-red-600'}`}>
+          ${isZenith ? 'bg-white/5 text-white/40 md:group-hover/header:bg-white/10 md:group-hover/header:text-white' : 'bg-red-50 text-red-900/20 md:group-hover/header:bg-red-100 md:group-hover/header:text-red-600'}`}>
           {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
         </div>
       </div>
@@ -370,6 +369,9 @@ export const ReleasePeakStats: React.FC<Props> = ({ videos, t, onDateClick }) =>
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent) => {
+    // Only track mouse position on larger screens to improve mobile performance and prevent tap interference
+    if (window.innerWidth < 768) return;
+    
     const { clientX, clientY, currentTarget } = e;
     const { left, top, width, height } = currentTarget.getBoundingClientRect();
     const x = (clientX - left) / width - 0.5;
@@ -449,124 +451,119 @@ export const ReleasePeakStats: React.FC<Props> = ({ videos, t, onDateClick }) =>
         </p>
       </div>
 
-      <div ref={chartsRef} className="grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-8 mb-12 md:mb-16">
-        {/* Monthly Chart Container */}
-        <div className="bg-white rounded-[2.5rem] md:rounded-[3rem] p-7 md:p-10 border border-red-50/50 shadow-xl relative overflow-hidden">
-          <div className="relative z-10 flex items-center gap-4 mb-8">
-            <div className="p-2.5 md:p-3.5 bg-red-950 text-white rounded-2xl shadow-lg">
-              <Calendar size={20} className="md:size-5" />
-            </div>
-            <div>
-              <h4 className="text-red-950 font-black text-base md:text-xl font-cny">月份发布统计</h4>
-              <p className="text-red-900/20 text-[8px] md:text-[9px] font-bold uppercase tracking-widest mt-1">Monthly Release Volume</p>
-            </div>
-          </div>
-          <div className="flex items-end justify-between gap-1.5 md:gap-2 h-40 md:h-56 px-1 md:px-4 relative">
-            {distributionData.months.map(([mKey, count], idx) => {
-              const height = (count / maxMonthVal) * 100;
-              const delay = idx * 100;
-              return (
-                <div key={mKey} className="flex-1 flex flex-col items-center group/bar relative h-full justify-end">
-                  <div 
-                    className="w-full max-w-[48px] md:max-w-[72px] transition-all origin-bottom relative rounded-t-lg md:rounded-t-xl bg-gradient-to-t from-red-950 to-red-600"
-                    style={{ 
-                      height: isChartsVisible ? `${height}%` : '0%', 
-                      transitionDuration: '1.4s',
-                      transitionDelay: `${delay}ms`,
-                      transitionTimingFunction: 'cubic-bezier(0.19, 1, 0.22, 1)'
-                    }}
-                  >
-                    <div className="absolute -top-7 md:-top-9 left-1/2 -translate-x-1/2 text-[10px] md:text-base font-black text-red-950">
-                      <AnimatedNumber value={count} isVisible={isChartsVisible} delay={delay + 800} />
-                    </div>
-                  </div>
-                  <div className="mt-3 md:mt-5 text-center">
-                    <span className="text-red-950/60 font-black text-[9px] md:text-xs">{mKey.split('-')[1]}月</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Weekday Chart Container */}
-        <div className="bg-white rounded-[2.5rem] md:rounded-[3rem] p-7 md:p-10 border border-red-50/50 shadow-xl relative overflow-hidden">
-          <div className="relative z-10 flex items-center gap-4 mb-8">
-            <div className="p-2.5 md:p-3.5 bg-red-950 text-white rounded-2xl shadow-lg">
-              <Zap size={20} className="md:size-5" />
-            </div>
-            <div>
-              <h4 className="text-red-950 font-black text-base md:text-xl font-cny">周发布频次</h4>
-              <p className="text-red-900/20 text-[8px] md:text-[9px] font-bold uppercase tracking-widest mt-1">Weekday Launch Data</p>
-            </div>
-          </div>
-          <div className="flex items-end justify-between gap-1.5 md:gap-2 h-40 md:h-56 px-1 md:px-4 relative">
-            {distributionData.weekdays.map((count, idx) => {
-              const height = (count / maxWeekdayVal) * 100;
-              const delay = idx * 80;
-              return (
-                <div key={idx} className="flex-1 flex flex-col items-center group/bar relative h-full justify-end">
-                  <div 
-                    className={`w-full max-w-[44px] md:max-w-[64px] transition-all origin-bottom relative rounded-t-lg md:rounded-t-xl ${idx >= 4 ? 'bg-gradient-to-t from-amber-600 to-amber-400' : 'bg-gradient-to-t from-red-950 to-red-600'}`}
-                    style={{ 
-                      height: isChartsVisible ? `${height}%` : '0%', 
-                      transitionDuration: '1.4s', 
-                      transitionDelay: `${delay}ms`,
-                      transitionTimingFunction: 'cubic-bezier(0.19, 1, 0.22, 1)'
-                    }}
-                  >
-                    <div className="absolute -top-7 md:-top-9 left-1/2 -translate-x-1/2 text-[10px] md:text-base font-black text-red-950">
-                      <AnimatedNumber value={count} isVisible={isChartsVisible} delay={delay + 800} />
-                    </div>
-                  </div>
-                  <div className="mt-3 md:mt-5 text-center">
-                    <span className={`font-black text-[9px] md:text-xs ${idx >= 4 ? 'text-amber-600' : 'text-red-950/60'}`}>{weekdayNames[idx]}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* Hall of Fame Container - Unified edge-to-edge content */}
-      <div 
-        className="bg-white rounded-[2.5rem] md:rounded-[3.5rem] border border-red-50/50 shadow-xl relative overflow-hidden" 
-        onMouseMove={handleMouseMove}
-      >
-        <div className="flex flex-col md:flex-row md:items-end justify-between px-6 pt-10 md:px-12 md:pt-14 mb-8 gap-4 relative z-10">
-           <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-4">
-                <div className="bg-amber-500 p-2.5 md:p-3.5 rounded-2xl text-white shadow-lg">
-                  <Trophy size={20} className="md:size-5" />
-                </div>
-                <div>
-                  <h3 className="text-2xl md:text-4xl font-black text-red-950 font-cny tracking-tight leading-none">爆发强度荣誉榜</h3>
-                  <p className="text-red-900/20 text-[8px] md:text-[9px] font-bold uppercase tracking-[0.4em] mt-1.5">Peak Intensity Hall of Fame</p>
-                </div>
+      <div className="flex flex-col gap-10 md:gap-16">
+        <div ref={chartsRef} className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16">
+          {/* Monthly Chart Container */}
+          <div className="bg-white rounded-[2.5rem] md:rounded-[3rem] p-7 md:p-10 border border-red-50/50 shadow-xl relative overflow-hidden">
+            <div className="relative z-10 flex items-center gap-4 mb-8">
+              <div className="p-2.5 md:p-3.5 bg-red-950 text-white rounded-2xl shadow-lg">
+                <Calendar size={20} className="md:size-5" />
               </div>
-              <p className="text-[10px] md:text-sm font-bold text-red-900/40 uppercase tracking-[0.2em] max-w-xl">
-                 记录 2026 新年歌赛季的每一个发布高光时刻，捕捉行业爆发的脉搏
-              </p>
-           </div>
-           <div className="flex items-center gap-3 bg-red-50 px-4 py-2 rounded-full border border-red-100 shadow-sm self-start md:self-auto">
-              <Activity size={14} className="text-red-600" />
-              <span className="text-[9px] md:text-[11px] font-black text-red-900 uppercase tracking-[0.2em]">Momentum Ranking</span>
-           </div>
+              <div>
+                <h4 className="text-lg md:text-2xl font-black text-red-950 font-cny tracking-tight leading-none">月份发布统计</h4>
+                <p className="text-red-900/20 text-[8px] md:text-[9px] font-bold uppercase tracking-widest mt-1">Monthly Release Volume</p>
+              </div>
+            </div>
+            <div className="flex items-end justify-between gap-1.5 md:gap-2 h-40 md:h-56 px-1 md:px-4 relative">
+              {distributionData.months.map(([mKey, count], idx) => {
+                const height = (count / maxMonthVal) * 100;
+                const delay = idx * 100;
+                return (
+                  <div key={mKey} className="flex-1 flex flex-col items-center group/bar relative h-full justify-end">
+                    <div 
+                      className="w-full max-w-[48px] md:max-w-[72px] transition-all origin-bottom relative rounded-t-lg md:rounded-t-xl bg-gradient-to-t from-red-950 to-red-600"
+                      style={{ 
+                        height: isChartsVisible ? `${height}%` : '0%', 
+                        transitionDuration: '1.4s',
+                        transitionDelay: `${delay}ms`,
+                        transitionTimingFunction: 'cubic-bezier(0.19, 1, 0.22, 1)'
+                      }}
+                    >
+                      <div className="absolute -top-7 md:-top-9 left-1/2 -translate-x-1/2 text-[10px] md:text-base font-black text-red-950">
+                        <AnimatedNumber value={count} isVisible={isChartsVisible} delay={delay + 800} />
+                      </div>
+                    </div>
+                    <div className="mt-3 md:mt-5 text-center">
+                      <span className="text-red-950/60 font-black text-[9px] md:text-xs">{mKey.split('-')[1]}月</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Weekday Chart Container */}
+          <div className="bg-white rounded-[2.5rem] md:rounded-[3rem] p-7 md:p-10 border border-red-50/50 shadow-xl relative overflow-hidden">
+            <div className="relative z-10 flex items-center gap-4 mb-8">
+              <div className="p-2.5 md:p-3.5 bg-red-950 text-white rounded-2xl shadow-lg">
+                <Zap size={20} className="md:size-5" />
+              </div>
+              <div>
+                <h4 className="text-lg md:text-2xl font-black text-red-950 font-cny tracking-tight leading-none">周发布频次</h4>
+                <p className="text-red-900/20 text-[8px] md:text-[9px] font-bold uppercase tracking-widest mt-1">Weekday Launch Data</p>
+              </div>
+            </div>
+            <div className="flex items-end justify-between gap-1.5 md:gap-2 h-40 md:h-56 px-1 md:px-4 relative">
+              {distributionData.weekdays.map((count, idx) => {
+                const height = (count / maxWeekdayVal) * 100;
+                const delay = idx * 80;
+                return (
+                  <div key={idx} className="flex-1 flex flex-col items-center group/bar relative h-full justify-end">
+                    <div 
+                      className={`w-full max-w-[44px] md:max-w-[64px] transition-all origin-bottom relative rounded-t-lg md:rounded-t-xl ${idx >= 4 ? 'bg-gradient-to-t from-amber-600 to-amber-400' : 'bg-gradient-to-t from-red-950 to-red-600'}`}
+                      style={{ 
+                        height: isChartsVisible ? `${height}%` : '0%', 
+                        transitionDuration: '1.4s', 
+                        transitionDelay: `${delay}ms`,
+                        transitionTimingFunction: 'cubic-bezier(0.19, 1, 0.22, 1)'
+                      }}
+                    >
+                      <div className="absolute -top-7 md:-top-9 left-1/2 -translate-x-1/2 text-[10px] md:text-base font-black text-red-950">
+                        <AnimatedNumber value={count} isVisible={isChartsVisible} delay={delay + 800} />
+                      </div>
+                    </div>
+                    <div className="mt-3 md:mt-5 text-center">
+                      <span className={`font-black text-[9px] md:text-xs ${idx >= 4 ? 'text-amber-600' : 'text-red-950/60'}`}>{weekdayNames[idx]}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
-        <div className="relative">
-          <div className="flex flex-col relative z-10">
-            {peakGroups.map((group, idx) => (
-              <PeakDayCard 
-                key={group.count}
-                group={group}
-                index={idx}
-                isZenith={idx === 0}
-                onDateClick={onDateClick}
-                mousePos={mousePos}
-              />
-            ))}
+        {/* Hall of Fame Container - Unified edge-to-edge content */}
+        <div 
+          className="bg-white rounded-[2.5rem] md:rounded-[3.5rem] border border-red-50/50 shadow-xl relative overflow-hidden" 
+          onMouseMove={handleMouseMove}
+        >
+          <div className="flex flex-col md:flex-row md:items-end justify-between px-6 pt-10 md:px-12 md:pt-14 mb-8 gap-4 relative z-10">
+             <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-4">
+                  <div className="bg-amber-500 p-2.5 md:p-3.5 rounded-2xl text-white shadow-lg">
+                    <Trophy size={20} className="md:size-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg md:text-2xl font-black text-red-950 font-cny tracking-tight leading-none">单日发布最多新年歌</h3>
+                    <p className="text-red-900/20 text-[8px] md:text-[9px] font-bold uppercase tracking-widest mt-1">Peak Release Days Leaderboard</p>
+                  </div>
+                </div>
+             </div>
+          </div>
+
+          <div className="relative">
+            <div className="flex flex-col relative z-10">
+              {peakGroups.map((group, idx) => (
+                <PeakDayCard 
+                  key={group.count}
+                  group={group}
+                  index={idx}
+                  isZenith={idx === 0}
+                  onDateClick={onDateClick}
+                  mousePos={mousePos}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>

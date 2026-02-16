@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { VideoData, Translations } from '../types';
 import { ChevronLeft, ChevronRight, Play, Info, Calendar as CalendarIcon, List as ListIcon, Search, X, Sparkles, Plus, ChevronDown, ChevronUp, Eye, Heart, Calendar, ArrowDownWideNarrow, Filter } from 'lucide-react';
@@ -539,7 +538,11 @@ export const CalendarExplorer: React.FC<Props> = ({ videos, t, onModalToggle }) 
                       </h5>
                       <div className="flex items-center gap-1.5 md:gap-2">
                         <div className="w-4 h-4 md:w-5 md:h-5 rounded-md bg-red-50 overflow-hidden border border-red-100 shrink-0">
-                          <img src={v.ChannelName} className="w-full h-full object-cover" alt="avatar" />
+                          <img 
+                            src={v.ChannelAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(v.ChannelName)}&background=random`} 
+                            className="w-full h-full object-cover" 
+                            alt="avatar" 
+                          />
                         </div>
                         <p className="text-[10px] md:text-[11px] text-red-900/60 font-black uppercase tracking-wider truncate">{v.ChannelName}</p>
                       </div>
